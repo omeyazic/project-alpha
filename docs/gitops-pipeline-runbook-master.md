@@ -3,7 +3,7 @@
 **Document Type:** Implementation Runbook  
 **Target Audience:** DevOps Engineers, SREs, Platform Teams  
 **Deployment Model:** Local Development Environment (Mac M1/M2, ARM64)  
-**Estimated Time:** 4-6 hours (first-time deployment)  
+**Estimated Time:** 5-6 hours (first-time deployment)  
 **Difficulty Level:** Intermediate to Advanced
 
 ---
@@ -17,6 +17,9 @@
 5. [Phase 2: Configuration Management](#phase-2-configuration-management)
 6. [Phase 3: Kubernetes Cluster](#phase-3-kubernetes-cluster)
 7. [Phase 4: DevOps Services](#phase-4-devops-services)
+   - Jenkins Installation
+   - Argo CD Installation
+   - Secret Management (HashiCorp Vault)
 8. [Phase 5: GitOps Pipeline](#phase-5-gitops-pipeline)
 9. [Phase 6: Validation & Testing](#phase-6-validation--testing)
 10. [Teardown & Cleanup](#teardown--cleanup)
@@ -29,22 +32,22 @@
 
 ```
 Phase 0: Environment Setup (30 min)
-   ↓     Setup tools, directories, Git
+   ↓     Setup tools, directories, Gi
 Phase 1: Infrastructure Provisioning (20 min)
    ↓     Create VMs with Terraform
 Phase 2: Configuration Management (20 min)
    ↓     Prep systems for Kubernetes
 Phase 3: Kubernetes Cluster (20 min)
    ↓     Deploy K3s cluster
-Phase 4: DevOps Services (60 min)
-   ↓     Install Jenkins & Argo CD
+Phase 4: DevOps Services (90 min)
+   ↓     Install Jenkins, Argo CD & Vault
 Phase 5: GitOps Pipeline (90 min)
    ↓     Build with Kaniko, deploy with Argo CD
 Phase 6: Validation & Testing (30 min)
    ✓     Test production-grade workflow
 ```
 
-**Total Time:** ~4-5 hours  
+**Total Time:** ~5-6 hours  
 **Outcome:** Production-ready local GitOps pipeline with security best practices
 
 **🎓 What Makes This Production-Grade:**
@@ -52,6 +55,8 @@ Phase 6: Validation & Testing (30 min)
 - ✅ No privileged container access
 - ✅ Kubernetes-native workflows
 - ✅ Complete GitOps automation
+- ✅ Centralized secret management with HashiCorp Vault
+- ✅ Dynamic secret injection (no static credentials)
 - ✅ Security best practices from day one
 
 ---
@@ -85,40 +90,40 @@ This guide contains two types of `{{...}}` syntax:
 
 ### Variable Reference Table
 
-| Category | Variable | Default Value | Description | Example |
-|----------|----------|---------------|-------------|---------|
+| Category | Variable | Default Value | Description | Example | Variable Used for this project |
+|----------|----------|---------------|-------------|---------|---------|
 | **Project Names** | | | | |
-| | `{{PROJECT_NAME}}` | `mygitopspipeline` | Main project/repo name | `my-devops-lab` |
-| | `{{APP_NAME}}` | `hello-gitops` | Application name | `flask-demo` |
-| **Network** | | | | |
-| | `{{CONTROL_PLANE_IP}}` | `192.168.2.2` | Control plane VM IP | `192.168.64.10` |
-| | `{{WORKER_NODE_IP}}` | `192.168.2.3` | Worker node VM IP | `192.168.64.11` |
-| | `{{ANSIBLE_CONTROL_IP}}` | `192.168.2.4` | Ansible inventory control IP | `192.168.64.10` |
-| | `{{ANSIBLE_WORKER_IP}}` | `192.168.2.5` | Ansible inventory worker IP | `192.168.64.11` |
-| **Service Ports** | | | | |
-| | `{{JENKINS_HTTP_PORT}}` | `30080` | Jenkins web interface | `30080` |
-| | `{{JENKINS_AGENT_PORT}}` | `30081` | Jenkins agent communication | `30081` |
-| | `{{ARGOCD_HTTP_PORT}}` | `30083` | Argo CD HTTP access | `30083` |
-| | `{{ARGOCD_HTTPS_PORT}}` | `30082` | Argo CD HTTPS access | `30082` |
-| | `{{APP_HTTP_PORT}}` | `30084` | Application web access | `30085` |
-| **Infrastructure** | | | | |
-| | `{{CONTROL_PLANE_HOSTNAME}}` | `k3s-control-01` | Control plane hostname | `k3s-master-01` |
-| | `{{WORKER_HOSTNAME}}` | `k3s-worker-01` | Worker node hostname | `k3s-node-01` |
-| | `{{K3S_VERSION}}` | `v1.28.5+k3s1` | K3s Kubernetes version | `v1.28.5+k3s1` |
-| | `{{K3S_TOKEN}}` | `my-secret-token` | K3s cluster join token | `prod-k3s-secret-2024` |
-| **User Credentials** | | | | |
-| | `{{GITHUB_USERNAME}}` | `YOUR_GITHUB_USERNAME` | Your GitHub username | `johndoe` |
-| | `{{DOCKERHUB_USERNAME}}` | `YOUR_DOCKERHUB_USERNAME` | Your Docker Hub username | `johndoe` |
-| | `{{LOCAL_USERNAME}}` | `yourusername` | Your Mac username | `john` |
-| **Kubernetes Namespaces** | | | | |
-| | `{{JENKINS_NAMESPACE}}` | `jenkins` | Jenkins K8s namespace | `ci` |
-| | `{{ARGOCD_NAMESPACE}}` | `argocd` | Argo CD K8s namespace, use "argocd" for namespace | `cd` |
-| | `{{APP_NAMESPACE}}` | `hello-gitops` | Application K8s namespace | `flask-demo` |
-| **Docker Images** | | | | |
-| | `{{JENKINS_IMAGE_NAME}}` | `jenkins-docker-kubectl` | Custom Jenkins image name | `jenkins-custom` |
-| | `{{APP_IMAGE_NAME}}` | `hello-gitops` | Application image name | `flask-demo` |
-| **File Paths** | | | | |
-| | `{{PROJECT_BASE_PATH}}` | `~/Desktop/mygitopspipeline` | Project directory path | `~/projects/gitops-lab` |
+| | `{{PROJECT_NAME}}` | `mygitopspipeline` | Main project/repo name | `my-devops-lab` | |
+| | `{{APP_NAME}}` | `hello-gitops` | Application name | `flask-demo` | |
+| **Network** | | | | | |
+| | `{{CONTROL_PLANE_IP}}` | `192.168.2.2` | Control plane VM IP | `192.168.64.10` | |
+| | `{{WORKER_NODE_IP}}` | `192.168.2.3` | Worker node VM IP | `192.168.64.11` | |
+| | `{{ANSIBLE_CONTROL_IP}}` | `192.168.2.4` | Ansible inventory control IP | `192.168.64.10` | |
+| | `{{ANSIBLE_WORKER_IP}}` | `192.168.2.5` | Ansible inventory worker IP | `192.168.64.11` | |
+| **Service Ports** | | | | | |
+| | `{{JENKINS_HTTP_PORT}}` | `30080` | Jenkins web interface | `30080` | |
+| | `{{JENKINS_AGENT_PORT}}` | `30081` | Jenkins agent communication | `30081` | |
+| | `{{ARGOCD_HTTP_PORT}}` | `30083` | Argo CD HTTP access | `30083` | |
+| | `{{ARGOCD_HTTPS_PORT}}` | `30082` | Argo CD HTTPS access | `30082` | |
+| | `{{APP_HTTP_PORT}}` | `30084` | Application web access | `30085` | |
+| **Infrastructure** | | | | | |
+| | `{{CONTROL_PLANE_HOSTNAME}}` | `k3s-control-01` | Control plane hostname | `k3s-master-01` | |
+| | `{{WORKER_HOSTNAME}}` | `k3s-worker-01` | Worker node hostname | `k3s-node-01` | |
+| | `{{K3S_VERSION}}` | `v1.28.5+k3s1` | K3s Kubernetes version | `v1.28.5+k3s1` | |
+| | `{{K3S_TOKEN}}` | `my-secret-token` | K3s cluster join token | `prod-k3s-secret-2024` | |
+| **User Credentials** | | | | | |
+| | `{{GITHUB_USERNAME}}` | `YOUR_GITHUB_USERNAME` | Your GitHub username | `johndoe` | |
+| | `{{DOCKERHUB_USERNAME}}` | `YOUR_DOCKERHUB_USERNAME` | Your Docker Hub username | `johndoe` | |
+| | `{{LOCAL_USERNAME}}` | `yourusername` | Your Mac username | `john` | |
+| **Kubernetes Namespaces** | | | | | |
+| | `{{JENKINS_NAMESPACE}}` | `jenkins` | Jenkins K8s namespace | `ci` | |
+| | `{{ARGOCD_NAMESPACE}}` | `argocd` | Argo CD K8s namespace, use "argocd" for namespace | `cd` | |
+| | `{{APP_NAMESPACE}}` | `hello-gitops` | Application K8s namespace | `flask-demo` | |
+| **Docker Images** | | | | | |
+| | `{{JENKINS_IMAGE_NAME}}` | `jenkins-docker-kubectl` | Custom Jenkins image name | `jenkins-custom` | |
+| | `{{APP_IMAGE_NAME}}` | `hello-gitops` | Application image name | `flask-demo` | |
+| **File Paths** | | | | | |
+| | `{{PROJECT_BASE_PATH}}` | `~/Desktop/mygitopspipeline` | Project directory path | `~/projects/gitops-lab` | |
 
 ### Port Allocation Strategy
 
@@ -227,7 +232,7 @@ Argo CD Sync → Kubernetes Deployment → Application Running
 
 ### Hardware Requirements
 
-- **Mac with Apple Silicon** (M1/M2/M3) or Intel Mac
+- **Mac with Apple Silicon** (M1/M2/M3)
 - **Minimum:** 8GB RAM, 50GB free disk space
 - **Recommended:** 16GB RAM, 100GB free disk space
 
@@ -263,6 +268,7 @@ Argo CD Sync → Kubernetes Deployment → Application Running
 | kubectl | `brew install kubectl` | `kubectl version --client` |
 | Git | `brew install git` | `git --version` |
 | Python 3 | `brew install python@3.11` | `python3 --version` |
+| Helm | `brew install helm` | `helm version` |
 
 ### Pre-Flight Checklist
 
@@ -290,6 +296,9 @@ command -v git >/dev/null 2>&1 && echo "✅ Git: $(git --version)" || echo "❌ 
 
 # Check Python
 command -v python3 >/dev/null 2>&1 && echo "✅ Python: $(python3 --version)" || echo "❌ Python: NOT INSTALLED"
+
+# Check Helm
+command -v helm >/dev/null 2>&1 && echo "✅ Helm: $(helm version --short)" || echo "❌ Helm: NOT INSTALLED"
 
 # Check disk space
 echo "💾 Disk Space Available: $(df -h ~ | awk 'NR==2 {print $4}')"
@@ -403,6 +412,8 @@ kubeconfig.*
 kubernetes/jenkins/kubectl
 kubernetes/jenkins/Dockerfile.bak
 
+
+# If you use Agentic coding tools - modify accordingly - currently set for Cursor as an example
 .cursor/
 .ssh/
 .cursor.ssh
@@ -517,6 +528,8 @@ The `larstobi/multipass` provider is a community-maintained provider that may ha
 
 Create the main Terraform file:
 
+*This main Terraform file defines your infrastructure as code, specifying the provider, resources, and variables needed to provision consistent, repeatable virtual machine environments. It works by declaring the desired state of your infrastructure, which Terraform then plans and applies to create or modify resources in your chosen cloud platform.*
+
 ```bash
 cd {{PROJECT_BASE_PATH}}/terraform
 
@@ -560,6 +573,8 @@ EOF
 
 Create outputs configuration:
 
+*The outputs configuration exposes key information from your Terraform deployment, such as VM IP addresses, making critical values easily accessible for subsequent automation steps or for user reference. When Terraform applies the infrastructure, it calculates and displays these defined outputs, which can also be consumed by other tools or modules in your pipeline.*
+
 ```bash
 cat > outputs.tf << 'EOF'
 output "control_plane_ip" {
@@ -585,6 +600,8 @@ EOF
 ### Step 1.2: Create Cloud-Init Files
 
 Control plane cloud-init:
+
+*This cloud-init configuration for the control plane node automatically performs initial system setup, including user creation, security hardening, and package installation, upon the virtual machine's first boot. It works by providing the cloud-init metadata service with a YAML script that executes a standardized set of commands to prepare a consistent and secure environment ready for K3s installation.*
 
 ```bash
 cat > cloud-init-control.yaml << 'EOF'
@@ -617,6 +634,8 @@ EOF
 
 Worker cloud-init:
 
+*This worker node cloud-init configuration automates the baseline provisioning steps, such as setting the hostname and installing necessary packages, ensuring each node meets the prerequisites for joining the K3s cluster. It works by running the defined set of initialization commands during the VM's first boot, creating a uniform environment that aligns with the cluster's security and operational requirements.*
+
 ```bash
 cat > cloud-init-worker.yaml << 'EOF'
 #cloud-config
@@ -647,6 +666,8 @@ EOF
 ```
 
 ### Step 1.3: Generate SSH Key (if needed)
+
+*This step generates a new SSH key pair on your local machine to establish secure, password-less authentication between your workstation and the newly provisioned virtual machines. It works by creating a private key, which you keep secure, and a public key that you add to the cloud-init configuration, allowing Terraform to embed it for authorized access during VM creation.*
 
 ```bash
 # Check if you have an SSH key
@@ -747,6 +768,8 @@ echo "Control Plane IP: $ACTUAL_CONTROL_IP"
 echo "Worker Node IP: $ACTUAL_WORKER_IP"
 ```
 
+**Now update your guide with the actual IPs from this point onwards as instructed below - no need to modify previous occurrences:** 
+
 **Action Required:**
 1. Open your working guide in your text editor
 2. Use Find & Replace to update IP addresses:
@@ -815,6 +838,10 @@ git push origin main
 cd {{PROJECT_BASE_PATH}}/ansible
 
 # Create inventory file
+
+*This Ansible inventory file organizes your cluster nodes into logical groups, defining connection details like IP addresses and usernames so automation tasks can target specific sets of servers. It works by providing a structured YAML map that Ansible uses to establish SSH connections and execute playbooks across the control plane and worker nodes without manual host specification.*
+
+```bash
 cat > inventory/hosts.yml << 'EOF'
 all:
   children:
@@ -840,6 +867,8 @@ EOF
 ```
 
 ### Step 2.2: Create Ansible Configuration
+
+*This Ansible configuration file sets essential runtime behaviors like disabling host key checking and defining the inventory path, streamlining playbook execution by reducing manual command-line arguments. It works by creating an ansible.cfg file in your project directory, whose settings automatically apply whenever you run Ansible commands within that location.*
 
 ```bash
 cat > ansible.cfg << 'EOF'
@@ -878,6 +907,8 @@ ansible k3s_cluster -i ansible/inventory/hosts.yml -m ping
 **If ping fails:** Check SSH keys, IP addresses, and VM status
 
 ### Step 2.4: Create Preflight Checks Playbook
+
+*This preflight checks playbook validates system prerequisites across all cluster nodes, such as memory, disk space, and network connectivity, ensuring a consistent foundation before installing Kubernetes. It works by executing a series of Ansible tasks that gather system facts and perform conditional checks, reporting any failures that could hinder a successful cluster deployment*
 
 ```bash
 cd {{PROJECT_BASE_PATH}}/ansible/playbooks
@@ -936,6 +967,8 @@ ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/preflight-chec
 
 ### Step 2.5: Create System Preparation Playbook
 
+*This playbook configures the underlying operating system on all nodes by installing dependencies, disabling swap, and tuning kernel parameters, which are mandatory requirements for a stable K3s cluster,  each node is identically prepared for the next installation phase.*
+
 ```bash
 cat > prepare-systems.yml << 'EOF'
 ---
@@ -963,12 +996,12 @@ cat > prepare-systems.yml << 'EOF'
 
     - name: Disable swap
       shell: swapoff -a
-      when: ansible_swaptotal_mb > 0
+      when: ansible_facts['memory_mb']['swap']['total'] > 0
 
     - name: Remove swap from fstab
       lineinfile:
         path: /etc/fstab
-        regexp: '^.*swap.*$'
+        regexp: '^.swap.*$'
         state: absent
 
     - name: Load br_netfilter module
@@ -1060,6 +1093,8 @@ git push origin main
 
 ### Step 3.1: Create K3s Server Installation Playbook
 
+*This playbook installs and configures the K3s control plane on the designated server node, setting up the cluster's management components and generating the join token for workers. It works by executing a remote installation script with specific flags for the server role and then securely distributing the cluster access token to your local Ansible control node for subsequent steps.*
+
 ```bash
 cd {{PROJECT_BASE_PATH}}/ansible/playbooks
 
@@ -1140,6 +1175,8 @@ PLAY RECAP
 
 ### Step 3.2: Create K3s Agent Installation Playbook
 
+*This playbook installs the K3s agent on each worker node and joins them to the existing cluster using the token obtained from the control plane. It works by fetching the join token and executing the K3s installation script with the agent role, automatically registering each node under the control plane's management.*
+
 ```bash
 cat > install-k3s-agent.yml << 'EOF'
 ---
@@ -1197,6 +1234,8 @@ ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/install-k3s-ag
 
 ### Step 3.3: Copy Kubeconfig to Local Machine
 
+*This step secures the cluster's administrative connection by copying the kubeconfig file from the control plane to your local machine and updating the server address to the node's accessible IP. Execute commands to transfer the file, replace the localhost IP, and set an environment variable, enabling your local kubectl to authenticate and manage the remote Kubernetes cluster.*
+
 ```bash
 cd {{PROJECT_BASE_PATH}}
 
@@ -1217,7 +1256,7 @@ echo "export KUBECONFIG={{PROJECT_BASE_PATH}}/kubeconfig" >> ~/.zshrc
 
 ```bash
 # Check kubectl works
-kubectl version --short
+kubectl version -short
 
 # Get cluster info
 kubectl cluster-info
@@ -1308,6 +1347,8 @@ git push origin main
 
 ### Step 4.1: Create Jenkins Namespace
 
+*Creating a dedicated namespace for Jenkins isolates its components and resources from other applications in the cluster, providing a clear administrative boundary and reducing potential conflicts.* 
+
 ```bash
 cd {{PROJECT_BASE_PATH}}/kubernetes/jenkins
 
@@ -1330,6 +1371,8 @@ kubectl get namespace {{JENKINS_NAMESPACE}}
 ```
 
 ### Step 4.2: Create Jenkins PVC
+
+*This PersistentVolumeClaim defines storage requirements for Jenkins, ensuring its critical data like job configurations and build logs are retained across pod restarts or rescheduling. It works by requesting a specific amount of persistent storage from the cluster's available PersistentVolumes, which will be dynamically provisioned and bound to the Jenkins pod when deployed.*
 
 ```bash
 cat > pvc.yaml << 'EOF'
@@ -1356,6 +1399,8 @@ kubectl get pvc -n {{JENKINS_NAMESPACE}}
 **Expected:** `STATUS: Bound`
 
 ### Step 4.3: Create Jenkins RBAC
+
+*This RBAC configuration grants the Jenkins service account the necessary permissions within its namespace to create and manage Kubernetes resources, which is essential for dynamic build agents and deployment tasks. We define a Role with specific API access rules and a RoleBinding that links that Role to the Jenkins service account, enabling secure, least-privilege automation from within Jenkins pipelines.*
 
 ```bash
 cat > rbac.yaml << 'EOF'
@@ -1404,6 +1449,8 @@ kubectl get clusterrolebinding jenkins
 
 ### Step 4.4: Download kubectl Binary for Jenkins
 
+*This step downloads the ARM64-compatible kubectl binary to your local machine, preparing it to be embedded into the custom Jenkins Docker image so Jenkins can interact with the Kubernetes cluster to be used for cluster operations inside the pipeline from within its container.*
+
 ```bash
 # Download kubectl binary (ARM64)
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/arm64/kubectl"
@@ -1421,6 +1468,8 @@ file kubectl
 **Note:** This binary will be embedded in Jenkins Docker image
 
 ### Step 4.5: Create Jenkins Dockerfile
+
+*This Dockerfile creates a custom Jenkins image by extending the official LTS version, installing essential plugins, and embedding the kubectl binary to enable cluster management directly from the Jenkins controller.*
 
 ```bash
 cat > Dockerfile << 'EOF'
@@ -1449,7 +1498,13 @@ EOF
 - kubectl is sufficient for Kubernetes pod management
 - This is the production-standard approach
 
-### Step 4.6: Build and Push Jenkins Image to Private Repository
+### Step 4.6: Build and Push Jenkins Image to Repository
+
+*We package the custom Jenkins Dockerfile into a container image and publish it to Docker Hub as a public repository, making the image accessible for deployment into your Kubernetes cluster for image pulls.*
+
+**Make sure Docker Desktop is running!!** 
+
+**📝 Note:** If your Docker repository is set as Private The image you just pushed will be created as private by default on Docker Hub and vice versa. Make the repository public for this tutorial to avoid trouble.
 
 ```bash
 # Login to Docker Hub
@@ -1464,30 +1519,16 @@ docker push {{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}:lts
 
 **⏱️ Build time:** 3-5 minutes
 
-**📝 Note:** The repository will be created as private by default on Docker Hub. Keep it private for this training.
+
+
+
 
 ### Step 4.7: Create Jenkins Deployment
 
 **📚 Architecture Note - Jenkins with Kubernetes Agents:**
 
-This deployment uses a **Jenkins Controller** that spawns **ephemeral Kubernetes pods** as build agents. 
 
-**Production-Grade Approach:**
-- ✅ **No privileged access:** No Docker socket mounting
-- ✅ **Dynamic agents:** Jenkins creates pods on-demand for each build
-- ✅ **Isolation:** Each build runs in its own pod
-- ✅ **Scalable:** Kubernetes manages resource allocation
-
-**Resource Considerations:**
-- Memory limit: 2Gi (sufficient for controller + small builds)
-- Build pods (Kaniko) get their own resource allocation
-- Monitor with: `kubectl top pod -n {{JENKINS_NAMESPACE}}`
-
-**Security Benefits:**
-- No root-equivalent access to host
-- No Docker daemon dependency
-- Container builds happen in isolated pods
-- Follows Kubernetes security best practices
+*This Deployment manifest defines a pod for the Jenkins controller that uses the custom image we've built, connects to persistent storage, and runs with a dedicated service account for secure cluster operations. It works by specifying the container specifications and resource limits, then Kubernetes creates and maintains the pod according to this blueprint, ensuring Jenkins remains available and can manage ephemeral build agents.*
 
 ```bash
 cat > deployment.yaml << 'EOF'
@@ -1534,6 +1575,25 @@ spec:
 EOF
 ```
 
+This deployment uses a **Jenkins Controller** that spawns **ephemeral Kubernetes pods** as build agents. 
+
+**Production-Grade Approach:**
+- ✅ **No privileged access:** No Docker socket mounting
+- ✅ **Dynamic agents:** Jenkins creates pods on-demand for each build
+- ✅ **Isolation:** Each build runs in its own pod
+- ✅ **Scalable:** Kubernetes manages resource allocation
+
+**Resource Considerations:**
+- Memory limit: 2Gi (sufficient for controller + small builds)
+- Build pods (Kaniko) get their own resource allocation
+- Monitor with: `kubectl top pod -n jenkins`
+
+**Security Benefits:**
+- No root-equivalent access to host
+- No Docker daemon dependency
+- Container builds happen in isolated pods
+- Follows Kubernetes security best practices
+
 **⚠️ IMPORTANT:** Before applying the deployment, you need to create the `dockerhub-credentials` secret. This will be done in Step 4.10. If you need to apply the deployment now, skip to Step 4.10 first to create the credentials, then return here.
 
 Apply deployment:
@@ -1548,6 +1608,8 @@ kubectl get pods -n {{JENKINS_NAMESPACE}} -w
 **Wait until STATUS = Running** (Ctrl+C to exit watch)
 
 ### Step 4.8: Create Jenkins Service
+
+*This Service exposes the Jenkins controller inside the cluster and externally via a NodePort, allowing web access on port 30080 and agent communication on 30081. It works by creating a stable network endpoint that routes traffic to the Jenkins pod based on its label selector, enabling both user interaction and build agent connections from outside the cluster.*
 
 ```bash
 cat > service.yaml << 'EOF'
@@ -1636,8 +1698,7 @@ ERROR: Unable to create pod
    - **Kubernetes URL:** Leave blank or use `https://kubernetes.default.svc.cluster.local`
      - ℹ️ When blank, Jenkins auto-detects the in-cluster Kubernetes API
    - **Kubernetes server certificate key:** Leave blank
-   - **Disable https certificate check:** ✅ **Check this box**
-     - ⚠️ For production, use proper TLS certificates instead
+   - **Disable https certificate check:** ✅ **Check this box** (⚠️ For production, use proper TLS certificates instead
    - **Kubernetes Namespace:** `{{JENKINS_NAMESPACE}}` (e.g., `jenkins`)
      - This is where Jenkins will create build pods
    - **Credentials:** Leave as `- none -`
@@ -1763,6 +1824,16 @@ Create Docker Hub credentials as a Kubernetes secret. This secret is used for:
 1. Pulling the private Jenkins image
 2. Allowing Kaniko to push built images
 
+
+**⚠️ Important:** CREATE DOCKERHUB TOKEN:
+- Go to: https://hub.docker.com/settings/security
+- Click **New Access Token**
+- Description: `GitOps Pipeline`
+- Access permissions: **Read, Write, Delete**
+- Click **Generate**
+- **Copy the token** (shown only once)
+- Use this token as `--docker-password` above
+
 ```bash
 # Create Docker registry secret in Jenkins namespace
 kubectl create secret docker-registry dockerhub-credentials \
@@ -1776,14 +1847,7 @@ kubectl create secret docker-registry dockerhub-credentials \
 kubectl get secret dockerhub-credentials -n {{JENKINS_NAMESPACE}}
 ```
 
-**⚠️ Important:** Use a Docker Hub **Access Token**, not your password:
-- Go to: https://hub.docker.com/settings/security
-- Click **New Access Token**
-- Description: `GitOps Pipeline`
-- Access permissions: **Read, Write, Delete**
-- Click **Generate**
-- **Copy the token** (shown only once)
-- Use this token as `--docker-password` above
+***If you have skipped here to create dockerhub token and you are done you can now return to line 1594 to continue with the deployment***
 
 **Part B: Jenkins UI Credentials**
 
@@ -1802,6 +1866,8 @@ In Jenkins UI:
 **📝 Note:** Docker Hub credentials are managed through the Kubernetes secret, not Jenkins UI credentials
 
 ### Part B: Argo CD Installation
+
+*Installing Argo CD deploys a declarative GitOps tool that automatically synchronizes your Kubernetes cluster state with the desired configuration defined in your Git repository. This is accomplished by applying the official Argo CD manifests, which create the necessary deployments, services, and custom resources to establish a continuous delivery controller within your cluster.*
 
 ### Step 4.11: Install Argo CD
 
@@ -1829,6 +1895,8 @@ kubectl get pods -n {{ARGOCD_NAMESPACE}}
 **Expected:** All pods in `Running` state
 
 ### Step 4.12: Expose Argo CD Server
+
+*Below command modifies the Argo CD service to make its web interface accessible externally by changing its type from ClusterIP to NodePort and mapping specific ports on your cluster nodes. (This NodePort approach is standard for training and quick access, while production environments typically use an Ingress controller with proper TLS termination for secure and managed external exposure.)*
 
 ```bash
 # Patch service to use NodePort
@@ -1897,6 +1965,318 @@ curl -I http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  # Argo CD HTTP
 ```
 
 **Expected:** HTTP responses from both services
+
+---
+
+### Part C: Secret Management
+
+*This phase deploys HashiCorp Vault as a centralized, secure secret store for your GitOps environment, enabling dynamic credential injection into applications at runtime without exposing secrets in manifests or Git. It works by installing Vault in your cluster with a Helm chart, configuring it to authenticate using Kubernetes service accounts, and using sidecar injectors to securely deliver secrets directly to pods.*
+
+**⚠️ IMPORTANT:** This training setup uses Vault in dev mode with in-memory storage, meaning all data (secrets, auth configurations, policies) is lost when VMs restart and must be reconfigured as explained in Steps 4.18-4.19
+
+## Phase 4.5: HashiCorp Vault
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ PHASE 4.5: SECRET MANAGEMENT ◄── YOU ARE HERE           │
+├─────────────────────────────────────────────────────────┤
+│  Kubernetes Cluster                                     │
+│  ┌────────────────────────────────────────────┐         │
+│  │ ┌──────────┐         ┌──────────┐         │         │
+│  │ │  Vault   │────────▶│ K8s Pods │         │ Dynamic │
+│  │ │ (Secrets)│         │ (Apps)   │         │ Inject  │
+│  │ └──────────┘         └──────────┘         │         │
+│  │   Port :8200          Sidecar Pattern     │         │
+│  └────────────────────────────────────────────┘         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Objective:** Deploy centralized secret management  
+**Time:** 30 minutes  
+**Service:** HashiCorp Vault
+
+**Why Vault:**
+- Centralized secret storage with audit trails
+- Dynamic secret injection at pod runtime
+- Service Account-based authentication (no hardcoded credentials)
+- Industry standard for production Kubernetes
+
+### Step 4.17: Install HashiCorp Vault
+
+*Installing HashiCorp Vault with Helm deploys a complete secret management system into your cluster, providing a centralized, encrypted store for credentials, certificates, and keys. It works by adding the HashiCorp Helm repository and executing the chart with a minimal configuration, which creates the necessary StatefulSet, services, and configuration for a production-ready Vault instance in development mode.*
+
+```bash
+cd {{PROJECT_BASE_PATH}}/kubernetes
+mkdir -p vault
+cd vault
+
+# Add HashiCorp Helm repository
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
+
+# Create namespace
+cat > namespace.yaml << 'EOF'
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault
+  labels:
+    name: vault
+    purpose: secret-management
+EOF
+
+kubectl apply -f namespace.yaml
+```
+
+**Install Vault in dev mode:**
+
+```bash
+# Install with dev settings (in-memory storage, auto-unsealed)
+helm install vault hashicorp/vault \
+  --namespace vault \
+  --set "server.dev.enabled=true" \
+  --set "server.dev.devRootToken=root" \
+  --set "injector.enabled=true" \
+  --set "server.dataStorage.enabled=false"
+
+# Wait for ready
+kubectl wait --for=condition=Ready pod/vault-0 -n vault --timeout=300s
+
+# Verify
+kubectl get pods -n vault
+```
+
+**Expected:**
+```
+NAME                                   READY   STATUS
+vault-0                                1/1     Running
+vault-agent-injector-xxxxx            1/1     Running
+```
+
+**⚠️ Dev Mode Note:** Uses in-memory storage and HTTP for Mac M1 compatibility. Production requires persistent storage, TLS, and HA configuration.
+
+### Step 4.18: Configure Kubernetes Authentication
+
+*This configuration establishes a trust relationship between Vault and your Kubernetes cluster, allowing pods to authenticate automatically using their service account tokens to retrieve secrets. It works by enabling the Kubernetes authentication method within Vault, linking it to the cluster's API server, and defining a role that grants specific secret access based on a pod's service account and namespace.*
+
+**Enable pods to authenticate using Service Account tokens:**
+
+```bash
+# Exec into Vault pod
+kubectl exec -it vault-0 -n vault -- sh
+
+# Inside Vault pod - enable Kubernetes auth
+vault auth enable kubernetes
+
+# Configure Vault to trust K8s API
+vault write auth/kubernetes/config \
+    kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443"
+
+# Create policy for app secrets
+vault policy write flaskapp-policy - <<EOF
+path "secret/data/flaskapp/*" {
+  capabilities = ["read"]
+}
+EOF
+
+# Create role binding policy to Service Account
+vault write auth/kubernetes/role/flaskapp \
+    bound_service_account_names=default \
+    bound_service_account_namespaces={{APP_NAMESPACE}} \
+    policies=flaskapp-policy \
+    ttl=24h
+```
+
+*There might appear a warning regarding audience configuration which means Vault is suggesting an optional security enhancement, but it's not required for the setup to work. You can simply ignore and proceed*
+
+```bash
+
+# Exit Vault pod
+exit
+```
+
+**What this does:**
+- Pods in `{{APP_NAMESPACE}}` with `default` SA can authenticate to Vault
+- They can read secrets from `secret/flaskapp/*` path only
+- Access tokens expire after 24 hours
+
+```mermaid
+sequenceDiagram
+   
+    participant Vault as Vault Pod
+    participant K8sAPI as Kubernetes API
+    participant Policy as Vault Policy Engine
+    participant Role as Kubernetes Auth Role
+    participant Pod as Application Pod<br/>(sample-app-namespace)
+    participant SA as Service Account<br/>(default)
+
+
+    rect rgb(80, 0, 160)
+        Note over Pod,Vault: Runtime: How Pods Authenticate & Access Secrets
+        Pod->>SA: Request service account token
+        SA-->>Pod: JWT token (includes namespace, SA name)
+        Pod->>Vault: Authenticate with JWT token
+        Vault->>K8sAPI: Verify token validity
+        K8sAPI-->>Vault: Token valid ✓
+        Vault->>Role: Check role: flaskapp<br/>SA=default? ✓<br/>Namespace=sample-app-namespace? ✓
+        Role-->>Vault: Authorization granted
+        Vault->>Policy: Check flaskapp-policy permissions
+        Policy-->>Vault: Can read secret/data/flaskapp/*
+        Vault-->>Pod: Return Vault token (TTL: 24h)
+        Pod->>Vault: Request secret from secret/flaskapp/*
+        Vault->>Policy: Verify read permission
+        Policy-->>Vault: Allowed ✓
+        Vault-->>Pod: Return secret data
+    end
+
+    Note over Pod,Vault: Token expires after 24 hours<br/>Pod must re-authenticate for new token
+
+```
+### Step 4.19: Store Secrets in Vault
+
+*This step creates and stores an actual secret, such as a database password, inside Vault's encrypted storage, making it available for secure retrieval by authorized applications. It works by using the Vault CLI to write a key-value pair to a defined secret path, which is then encrypted and stored, ready for dynamic injection into pods that have the corresponding access policy.*
+
+```bash
+# Write application secrets to Vault
+kubectl exec -it vault-0 -n vault -- \
+  vault kv put secret/flaskapp/config \
+  app_secret="ProductionSecretValue2024" \
+  environment="production"
+
+# Verify (optional)
+kubectl exec -it vault-0 -n vault -- \
+  vault kv get secret/flaskapp/config
+```
+
+**Expected:**
+```
+===== Data =====
+Key             Value
+---             -----
+app_secret      ProductionSecretValue2024
+environment     production
+```
+
+### Step 4.20: Save Vault Configuration
+
+*Saving the Vault configuration as a Kubernetes ConfigMap persists the setup commands for the Kubernetes authentication method and secret policies, ensuring they can be re-applied consistently if the Vault pod is recreated. It works by storing the executed Vault CLI commands in a ConfigMap manifest, which acts as documented, version-controlled runbook that can be referenced or reapplied during recovery or scaling scenario*
+
+```bash
+cd {{PROJECT_BASE_PATH}}/kubernetes/vault
+```
+### Create installation script
+
+*Create an installation script that automates the deployment of Vault using Helm with a development-mode configuration, providing a consistent and repeatable method to stand up the secret management service. It works by defining a bash script that adds the Helm repository, creates the namespace, installs the chart with specific parameters, and waits for the pod to become ready, capturing the entire process in a single executable command.*
+
+```bash
+cat > install-vault.sh << 'EOF'
+#!/bin/bash
+set -e
+
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
+
+kubectl apply -f namespace.yaml
+
+helm install vault hashicorp/vault \
+  --namespace vault \
+  --set "server.dev.enabled=true" \
+  --set "server.dev.devRootToken=root" \
+  --set "injector.enabled=true" \
+  --set "server.dataStorage.enabled=false"
+
+kubectl wait --for=condition=Ready pod/vault-0 -n vault --timeout=300s
+echo "✅ Vault installed"
+EOF
+
+chmod +x install-vault.sh
+```
+
+### Create installation script
+
+*Creata a configuration script that programmatically sets up Vault's Kubernetes authentication method and access policies by executing commands directly inside the Vault pod, ensuring the authentication backend is ready for applications to retrieve secrets. It works by encapsulating the necessary vault auth enable and policy creation commands into a script that can be run after installation, establishing the secure link between your Kubernetes cluster and the Vault server.*
+
+```bash
+cat > configure-auth.sh << 'EOF'
+#!/bin/bash
+set -e
+
+kubectl exec -it vault-0 -n vault -- sh -c '
+vault auth enable kubernetes
+vault write auth/kubernetes/config \
+    kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443"
+'
+
+kubectl exec -it vault-0 -n vault -- vault policy write flaskapp-policy - <<POLICY
+path "secret/data/flaskapp/*" {
+  capabilities = ["read"]
+}
+POLICY
+
+kubectl exec -it vault-0 -n vault -- vault write auth/kubernetes/role/flaskapp \
+    bound_service_account_names=default \
+    bound_service_account_namespaces={{APP_NAMESPACE}} \
+    policies=flaskapp-policy \
+    ttl=24h
+
+echo "✅ Vault configured"
+EOF
+
+chmod +x configure-auth.sh
+
+```
+### Create README
+```bash
+cat > README.md << 'EOF'
+# HashiCorp Vault
+
+## Installation
+```bash
+./install-vault.sh
+./configure-auth.sh
+
+## Add Secrets
+```bash
+kubectl exec -it vault-0 -n vault -- \
+  vault kv put secret/flaskapp/config key=value
+
+## Verify
+```bash
+kubectl get pods -n vault
+kubectl exec -it vault-0 -n vault -- vault status
+
+EOF
+```
+
+**Commit configuration:**
+
+```bash
+cd {{PROJECT_BASE_PATH}}
+
+git add kubernetes/vault/
+git commit -m "feat(vault): Add HashiCorp Vault for secret management"
+git push origin main
+```
+
+**Verify Vault setup:**
+
+```bash
+# Check pods
+kubectl get pods -n vault
+
+# Check auth methods
+kubectl exec -it vault-0 -n vault -- vault auth list
+
+# Verify role
+kubectl exec -it vault-0 -n vault -- vault read auth/kubernetes/role/flaskapp
+```
+
+**Expected:**
+- Vault pods running (2/2)
+- Auth methods include `kubernetes/`
+- Role shows correct namespace and policy bindings
+
+**✅ Phase 4.5 Complete!** Vault is ready to inject secrets into application pods.
 
 ---
 
@@ -2297,6 +2677,8 @@ git init
 
 ### Step 5.9: Create Kubernetes Manifests
 
+**Secret Injection:** These manifests use Vault Agent Injector annotations. Vault automatically injects a sidecar container that fetches secrets and writes them to `/vault/secrets/config`. The application sources this file at startup.
+
 ```bash
 cd {{APP_NAME}}
 
@@ -2311,7 +2693,7 @@ metadata:
     managed-by: argocd
 EOF
 
-# Deployment
+# Deployment with Vault integration
 cat > deployment.yaml << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
@@ -2329,7 +2711,17 @@ spec:
     metadata:
       labels:
         app: {{APP_NAME}}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "flaskapp"
+        vault.hashicorp.com/agent-inject-secret-config: "secret/data/flaskapp/config"
+        vault.hashicorp.com/agent-inject-template-config: |
+          {{ with secret "secret/data/flaskapp/config" -}}
+            export APP_SECRET="{{ .Data.data.app_secret }}"
+            export ENVIRONMENT="{{ .Data.data.environment }}"
+          {{- end }}
     spec:
+      serviceAccountName: default
       imagePullSecrets:
       - name: dockerhub-secret
       containers:
@@ -2338,6 +2730,8 @@ spec:
         ports:
         - containerPort: 5000
           name: http
+        command: ["/bin/sh", "-c"]
+        args: ["source /vault/secrets/config && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 60 app:app"]
         env:
         - name: APP_VERSION
           value: "1.0.0"
@@ -2352,13 +2746,13 @@ spec:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 15
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
-          initialDelaySeconds: 5
+          initialDelaySeconds: 10
           periodSeconds: 5
 EOF
 
@@ -2417,7 +2811,7 @@ EOF
 ```bash
 
 # 1. Go to https://github.com/new
-# 2. Repository name: newgitopsproject-manifests
+# 2. Repository name: {{PROJECT_NAME}}-manifests
 # 3. Private
 # 4. Do NOT initialize with README
 # 5. Create repository
@@ -2502,43 +2896,9 @@ Created Pod: jenkins/{{PROJECT_NAME}}-flaskapp-pipeline-X-xxxxx
 
 ### Part D: Argo CD Application Setup
 
-### Step 5.13a: Create Docker Registry Secret for Application Namespace
 
 
-**🔐 Why a Second Secret?**
-
-You already created `dockerhub-credentials` in the Jenkins namespace (Step 4.10). Now you need a separate secret in the application namespace because:
-- Kubernetes secrets are namespace-scoped (cannot be shared across namespaces)
-- The application pods need to pull your private Flask image from Docker Hub
-- This is separate from the Jenkins/Kaniko secret
-
-**Secret Overview:**
-
-| Secret | Namespace | Used By |
-|--------|-----------|---------|
-| `dockerhub-credentials` | `jenkins` | Jenkins pod, Kaniko builds |
-| `dockerhub-secret` | `{{APP_NAMESPACE}}` | Flask application pods |
-
-
-Create the Docker Hub secret in the application namespace to pull private images:
-
-```bash
-# Create Docker registry secret in application namespace
-kubectl create secret docker-registry dockerhub-secret \
-  --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
-  --docker-password=YOUR_DOCKERHUB_TOKEN \
-  --docker-email=YOUR_EMAIL \
-  -n {{APP_NAMESPACE}}
-
-# Verify secret created
-kubectl get secret dockerhub-secret -n {{APP_NAMESPACE}}
-```
-
-**📝 Note:** Use the same Docker Hub access token you created in Step 4.10.
-
-
-### Step 5.13b: Argo CD Repository Authentication Setup
+### Step 5.13: Argo CD Repository Authentication Setup
 Private GitHub repositories require credentials for Argo CD to sync manifests
 
 
@@ -2592,6 +2952,40 @@ kubectl apply -f {{APP_NAME}}.yaml
 # Verify application created
 kubectl get application -n {{ARGOCD_NAMESPACE}}
 ```
+### Step 5.14b: Create Docker Registry Secret for Application Namespace
+
+
+**🔐 Why a Second Secret?**
+
+You already created `dockerhub-credentials` in the Jenkins namespace (Step 4.10). Now you need a separate secret in the application namespace because:
+- Kubernetes secrets are namespace-scoped (cannot be shared across namespaces)
+- The application pods need to pull your private Flask image from Docker Hub
+- This is separate from the Jenkins/Kaniko secret
+
+**Secret Overview:**
+
+| Secret | Namespace | Used By |
+|--------|-----------|---------|
+| `dockerhub-credentials` | `jenkins` | Jenkins pod, Kaniko builds |
+| `dockerhub-secret` | `sample-app-namespace` | Flask application pods |
+
+
+Create the Docker Hub secret in the application namespace to pull private images:
+
+```bash
+# Create Docker registry secret in application namespace
+kubectl create secret docker-registry dockerhub-secret \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-password=YOUR_DOCKERHUB_TOKEN \
+  --docker-email=YOUR_EMAIL \
+  -n sample-app-namespace
+
+# Verify secret created
+kubectl get secret dockerhub-secret -n sample-app-namespace
+```
+
+**📝 Note:** Use the same Docker Hub access token you created in Step 4.10.
 
 
 ### Step 5.15: Verify in Argo CD UI
@@ -2775,9 +3169,36 @@ kubectl get applications -n {{ARGOCD_NAMESPACE}}
 curl -I http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}  # Jenkins
 curl -I http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  # Argo CD
 curl -I http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}  # {{APP_NAME}}
+
+# 8. Validate Vault integration
+kubectl get pods -n {{APP_NAMESPACE}}  # Should show READY 2/2 (app + vault-agent)
+
+# 9. Check secret injection
+POD_NAME=$(kubectl get pods -n {{APP_NAMESPACE}} -l app={{APP_NAME}} -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- ls /vault/secrets/
+
+# 10. Verify secret content
+kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- cat /vault/secrets/config
 ```
 
-**Expected:** All services responding with HTTP 200 or 302
+**Expected:**
+- All services responding with HTTP 200 or 302
+- Application pods show `2/2` ready (app container + vault-agent sidecar)
+- `/vault/secrets/config` file exists with exported environment variables
+
+**Vault Validation:**
+
+```bash
+# Verify Vault sidecar is running
+kubectl describe pod -n {{APP_NAMESPACE}} -l app={{APP_NAME}} | grep -A 2 "vault-agent:"
+
+# Test secret access
+kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- sh -c 'source /vault/secrets/config && echo $APP_SECRET'
+```
+
+**Expected:** Shows `ProductionSecretValue2024`
+
+**If pods show 1/2 or Init:0/1:** Wait 10-20 seconds for Vault agent initialization.
 
 ### Step 6.4: Performance Test
 
@@ -2854,6 +3275,7 @@ kubectl delete application {{APP_NAME}} -n {{ARGOCD_NAMESPACE}}
 kubectl delete namespace {{APP_NAMESPACE}}
 kubectl delete namespace {{JENKINS_NAMESPACE}}
 kubectl delete namespace {{ARGOCD_NAMESPACE}}
+kubectl delete namespace vault
 
 # Step 3: Wait for all resources to be deleted
 kubectl get all -A
@@ -3120,7 +3542,7 @@ df -h  # Ensure enough disk space (need 20GB+)
 
 # Check virtualization
 # M1/M2 Macs: Multipass uses QEMU
-# Intel Macs: Multipass uses HyperKit
+
 multipass get local.driver
 ```
 
@@ -3434,6 +3856,104 @@ kubectl logs -n NAMESPACE -l app=APP_LABEL --tail=100
 # Force delete stuck resources
 kubectl delete pod POD_NAME -n NAMESPACE --grace-period=0 --force
 ```
+
+---
+
+#### Issue 11: Pods stuck at Init:0/1 state after VM Restart
+
+**⚠️ Vault Dev Mode Limitation**
+
+This training setup uses Vault in development mode with in-memory storage (`Storage Type: inmem`). This means:
+
+- ✅ **Easy setup** - No persistent storage required
+- ❌ **Data loss on restart** - All secrets, auth configurations, and policies are lost when VMs restart
+- 🔄 **Requires reconfiguration** - You must manually reconfigure Vault after every cluster/VM restart
+
+### Symptoms After VM Restart:
+
+```bash
+# Application pods stuck in Init:0/1 or CrashLoopBackOff
+kubectl get pods -n sample-app-namespace
+NAME                               READY   STATUS     RESTARTS   AGE
+sample-flask-app-xxxxx-xxxxx       0/2     Init:0/1   0          2m
+
+# Vault agent logs show authentication errors
+kubectl logs POD_NAME -n sample-app-namespace -c vault-agent-init
+[ERROR] agent.auth.handler: error authenticating: error="permission denied"
+```
+
+### Recovery Steps:
+
+**Step 1: Verify Vault is running and unsealed**
+```bash
+kubectl get pods -n vault
+kubectl exec -it vault-0 -n vault -- vault status
+# Should show: Sealed = false
+```
+
+**Step 2: Reconfigure Kubernetes Authentication**
+```bash
+kubectl exec -it vault-0 -n vault -- sh
+
+# Inside Vault pod - enable Kubernetes auth
+vault auth enable kubernetes
+
+# Configure Vault to trust K8s API
+vault write auth/kubernetes/config \
+    kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443"
+
+# Create policy for app secrets
+vault policy write flaskapp-policy - <<EOF
+path "secret/data/flaskapp/*" {
+  capabilities = ["read"]
+}
+EOF
+
+# Create role binding policy to Service Account
+vault write auth/kubernetes/role/flaskapp \
+    bound_service_account_names=default \
+    bound_service_account_namespaces=sample-app-namespace \
+    policies=flaskapp-policy \
+    ttl=24h
+
+# Exit Vault pod
+exit
+```
+
+**Step 3: Re-store Application Secrets**
+```bash
+# Write application secrets to Vault
+kubectl exec -it vault-0 -n vault -- \
+  vault kv put secret/flaskapp/config \
+  app_secret="ProductionSecretValue2024" \
+  environment="production"
+
+# Verify (optional)
+kubectl exec -it vault-0 -n vault -- \
+  vault kv get secret/flaskapp/config
+```
+
+**Step 4: Clean Up Failed Pods**
+```bash
+# Delete pods stuck in Unknown or Init state
+kubectl delete pod --all -n sample-app-namespace
+
+# ArgoCD will automatically recreate them
+kubectl get pods -n sample-app-namespace -w
+```
+
+**Expected Result:**
+- Pods should transition from `Init:0/1` → `Running`
+- ArgoCD application health: `Degraded` → `Healthy`
+
+### Production Recommendation:
+
+For production environments, use Vault with persistent storage:
+- **Integrated Storage (Raft)** - Vault's built-in HA storage
+- **Consul** - Distributed key-value store
+- **Cloud Storage** - AWS S3, Azure Blob, GCP Storage
+
+This ensures secrets and configurations survive restarts.
 
 ---
 

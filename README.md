@@ -8,6 +8,7 @@ A complete CI/CD pipeline demonstrating enterprise practices:
 - Infrastructure as Code (Terraform + Multipass)
 - Configuration Management (Ansible)
 - Kubernetes Cluster (K3s)
+- Secret Management (HashiCorp Vault)
 - Continuous Integration (Jenkins with Kubernetes agents)
 - Rootless Image Builds (Kaniko)
 - Continuous Deployment (ArgoCD)
@@ -32,6 +33,7 @@ A complete CI/CD pipeline demonstrating enterprise practices:
 - Terraform
 - Ansible
 - kubectl
+- Helm
 - Git
 - Python 3
 
@@ -93,6 +95,8 @@ Phase 6: Validation & Testing (30 min)
 
 ## Security Highlights
 
+- Centralized secret management with HashiCorp Vault
+- Dynamic credential injection via Vault sidecar agents
 - Rootless image builds with Kaniko (no Docker daemon)
 - No privileged container access required
 - Kubernetes-native workflows
@@ -113,6 +117,7 @@ gitops-training/
 │   └── roles/                 # Ansible roles (you populate)
 ├── kubernetes/
 │   ├── jenkins/               # Jenkins K8s manifests (you populate)
+│   ├── vault/                 # Vault K8s manifests (you populate)
 │   ├── argocd/
 │   │   └── applications/      # ArgoCD applications (you populate)
 │   └── test-apps/             # Test application manifests (you populate)
@@ -127,6 +132,7 @@ gitops-training/
 | Configuration | Ansible | System configuration |
 | Orchestration | K3s | Lightweight Kubernetes |
 | Container Runtime | containerd | Container execution |
+| Secret Management | HashiCorp Vault | Secure secret storage |
 | Image Builder | Kaniko | Rootless image builds |
 | CI Tool | Jenkins | Continuous Integration |
 | CD Tool | ArgoCD | Continuous Deployment |
