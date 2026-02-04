@@ -1,0 +1,40 @@
+---
+- name: Preflight checks for K3s nodes
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check OS version
+      command: lsb_release -d
+      register: os_version
+      changed_when: false
+
+    - name: Display OS version
+      debug:
+        msg: "{{ os_version.stdout }}"
+
+    - name: Check available memory
+      shell: free -h | grep Mem | awk '{print $2}'
+      register: total_memory
+      changed_when: false
+
+    - name: Display memory
+      debug:
+        msg: "Total Memory: {{ total_memory.stdout }}"
+
+    - name: Check disk space
+      shell: df -h / | tail -1 | awk '{print $4}'
+      register: disk_space
+      changed_when: false
+
+    - name: Display disk space
+      debug:
+        msg: "Available Disk Space: {{ disk_space.stdout }}"
+
+    - name: Check CPU count
+      shell: nproc
+      register: cpu_count
+      changed_when: false
+
+    - name: Display CPU count
+      debug:
+        msg: "CPU Count: {{ cpu_count.stdout }}"

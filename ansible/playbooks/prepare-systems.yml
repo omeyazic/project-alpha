@@ -1,0 +1,52 @@
+---
+- name: Prepare systems for K3s installation
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+          - vim
+          - net-tools
+          - ca-certificates
+          - apt-transport-https
+          - software-properties-common
+        state: present
+
+    - name: Disable swap
+      shell: swapoff -a
+      when: ansible_facts['memory_mb']['swap']['total'] > 0
+
+    - name: Remove swap from fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: '^.swap.*$'
+        state: absent
+
+    - name: Load br_netfilter module
+      modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Enable IP forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        reload: yes
+
+    - name: Set timezone to UTC
+      timezone:
+        name: UTC
+
+    - name: Verify connectivity
+      ping:
+        data: "System prepared successfully"
