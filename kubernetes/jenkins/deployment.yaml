@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccountName: jenkins
+      imagePullSecrets:
+      - name: dockerhub-credentials
+      containers:
+      - name: jenkins
+        image: voltkruger/my-jenkins-image:lts
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 50000
+          name: agent
+        volumeMounts:
+        - name: jenkins-home
+          mountPath: /var/jenkins_home
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+      volumes:
+      - name: jenkins-home
+        persistentVolumeClaim:
+          claimName: jenkins-pvc
