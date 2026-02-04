@@ -1,0 +1,51 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+!example.tfvars
+
+# Ansible
+*.retry
+.vault_pass
+
+# SSH Keys
+*.pem
+*.key
+id_rsa*
+
+# OS Files
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# Secrets
+secrets/
+.env
+
+# Kubeconfig files
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Kubernetes binaries
+kubernetes/jenkins/kubectl
+kubernetes/jenkins/Dockerfile.bak
+
+
+# If you use Agentic coding tools - modify accordingly - currently set for Cursor as an example
+.cursor/
+.ssh/
+.cursor.ssh
+
+/Users/omeryazici/Desktop/gitops-training-with-runbook/docs/secrets.txt
+*.txt

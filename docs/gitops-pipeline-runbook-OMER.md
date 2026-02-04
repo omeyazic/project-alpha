@@ -81,7 +81,7 @@ This guide contains two types of `{{...}}` syntax:
 
 | Type | Format | Action | Examples |
 |------|--------|--------|----------|
-| **Configuration Placeholders** | `{{UPPERCASE_NAME}}` | ✅ **REPLACE these** | `{{PROJECT_NAME}}`, `{{GITHUB_USERNAME}}` |
+| **Configuration Placeholders** | `{{UPPERCASE_NAME}}` | ✅ **REPLACE these** | `project-alpha`, `omeyazic` |
 | **Ansible/Jinja2 Variables** | `{{lowercase_name}}` | ❌ **DON'T replace** | `{{node_ip}}`, `{{k3s_server_ip}}` |
 
 **Rule of Thumb:** 
@@ -93,37 +93,37 @@ This guide contains two types of `{{...}}` syntax:
 | Category | Variable | Default Value | Description | Example | Variable Used for this project |
 |----------|----------|---------------|-------------|---------|---------|
 | **Project Names** | | | | |
-| | `{{PROJECT_NAME}}` | `mygitopspipeline` | Main project/repo name | `my-devops-lab` | |
-| | `{{APP_NAME}}` | `hello-gitops` | Application name | `flask-demo` | |
+| | `project-alpha` | `mygitopspipeline` | Main project/repo name | `my-devops-lab` | |
+| | `test-application` | `hello-gitops` | Application name | `flask-demo` | |
 | **Network** | | | | | |
 | | `{{CONTROL_PLANE_IP}}` | `192.168.2.2` | Control plane VM IP | `192.168.64.10` | |
 | | `{{WORKER_NODE_IP}}` | `192.168.2.3` | Worker node VM IP | `192.168.64.11` | |
 | | `{{ANSIBLE_CONTROL_IP}}` | `192.168.2.4` | Ansible inventory control IP | `192.168.64.10` | |
 | | `{{ANSIBLE_WORKER_IP}}` | `192.168.2.5` | Ansible inventory worker IP | `192.168.64.11` | |
 | **Service Ports** | | | | | |
-| | `{{JENKINS_HTTP_PORT}}` | `30080` | Jenkins web interface | `30080` | |
-| | `{{JENKINS_AGENT_PORT}}` | `30081` | Jenkins agent communication | `30081` | |
-| | `{{ARGOCD_HTTP_PORT}}` | `30083` | Argo CD HTTP access | `30083` | |
-| | `{{ARGOCD_HTTPS_PORT}}` | `30082` | Argo CD HTTPS access | `30082` | |
-| | `{{APP_HTTP_PORT}}` | `30084` | Application web access | `30085` | |
+| | `30080` | `30080` | Jenkins web interface | `30080` | |
+| | `30081` | `30081` | Jenkins agent communication | `30081` | |
+| | `30083` | `30083` | Argo CD HTTP access | `30083` | |
+| | `30082}` | `30082` | Argo CD HTTPS access | `30082` | |
+| | `30084` | `30084` | Application web access | `30085` | |
 | **Infrastructure** | | | | | |
-| | `{{CONTROL_PLANE_HOSTNAME}}` | `k3s-control-01` | Control plane hostname | `k3s-master-01` | |
-| | `{{WORKER_HOSTNAME}}` | `k3s-worker-01` | Worker node hostname | `k3s-node-01` | |
-| | `{{K3S_VERSION}}` | `v1.28.5+k3s1` | K3s Kubernetes version | `v1.28.5+k3s1` | |
-| | `{{K3S_TOKEN}}` | `my-secret-token` | K3s cluster join token | `prod-k3s-secret-2024` | |
+| | `kubernetes-control-plane-node` | `k3s-control-01` | Control plane hostname | `k3s-master-01` | |
+| | `kubernetes-worker-plane-node` | `k3s-worker-01` | Worker node hostname | `k3s-node-01` | |
+| | `v1.28.5+k3s1` | `v1.28.5+k3s1` | K3s Kubernetes version | `v1.28.5+k3s1` | |
+| | `my-secret-token` | `my-secret-token` | K3s cluster join token | `prod-k3s-secret-2024` | |
 | **User Credentials** | | | | | |
-| | `{{GITHUB_USERNAME}}` | `YOUR_GITHUB_USERNAME` | Your GitHub username | `johndoe` | |
-| | `{{DOCKERHUB_USERNAME}}` | `YOUR_DOCKERHUB_USERNAME` | Your Docker Hub username | `johndoe` | |
-| | `{{LOCAL_USERNAME}}` | `yourusername` | Your Mac username | `john` | |
+| | `omeyazic` | `YOUR_GITHUB_USERNAME` | Your GitHub username | `johndoe` | |
+| | `voltkruger` | `YOUR_DOCKERHUB_USERNAME` | Your Docker Hub username | `johndoe` | |
+| | `omeryazici` | `yourusername` | Your Mac username | `john` | |
 | **Kubernetes Namespaces** | | | | | |
-| | `{{JENKINS_NAMESPACE}}` | `jenkins` | Jenkins K8s namespace | `ci` | |
-| | `{{ARGOCD_NAMESPACE}}` | `argocd` | Argo CD K8s namespace, use "argocd" for namespace | `cd` | |
-| | `{{APP_NAMESPACE}}` | `hello-gitops` | Application K8s namespace | `flask-demo` | |
+| | `jenkins` | `jenkins` | Jenkins K8s namespace | `ci` | |
+| | `argocd` | `argocd` | Argo CD K8s namespace, use "argocd" for namespace | `cd` | |
+| | `test-app-ns` | `hello-gitops` | Application K8s namespace | `flask-demo` | |
 | **Docker Images** | | | | | |
-| | `{{JENKINS_IMAGE_NAME}}` | `jenkins-docker-kubectl` | Custom Jenkins image name | `jenkins-custom` | |
-| | `{{APP_IMAGE_NAME}}` | `hello-gitops` | Application image name | `flask-demo` | |
+| | `my-jenkins-image` | `jenkins-docker-kubectl` | Custom Jenkins image name | `jenkins-custom` | |
+| | `test-app-container-image` | `hello-gitops` | Application image name | `flask-demo` | |
 | **File Paths** | | | | | |
-| | `{{PROJECT_BASE_PATH}}` | `~/Desktop/mygitopspipeline` | Project directory path | `~/projects/gitops-lab` | |
+| | `~/Desktop/gitops-training-with-runbook` | `~/Desktop/mygitopspipeline` | Project directory path | `~/projects/gitops-lab` | |
 
 ### Port Allocation Strategy
 
@@ -139,9 +139,9 @@ This guide contains two types of `{{...}}` syntax:
 ### Quick Start: Minimal Required Changes
 
 If you want to get started quickly, you MUST at minimum replace:
-1. `{{GITHUB_USERNAME}}` - Your actual GitHub username
-2. `{{DOCKERHUB_USERNAME}}` - Your actual Docker Hub username
-3. `{{LOCAL_USERNAME}}` - Your Mac username (check with `whoami` command)
+1. `omeyazic` - Your actual GitHub username
+2. `voltkruger` - Your actual Docker Hub username
+3. `omeryazici` - Your Mac username (check with `whoami` command)
 
 **⚠️ IMPORTANT - DO NOT Replace IP Addresses Yet:**
 - `{{CONTROL_PLANE_IP}}`, `{{WORKER_NODE_IP}}`, `{{ANSIBLE_CONTROL_IP}}`, `{{ANSIBLE_WORKER_IP}}`
@@ -173,7 +173,7 @@ A complete local GitOps pipeline demonstrating enterprise-grade CI/CD practices:
 │  ┌─────────────────────────────────┼─────────────────────┐              │
 │  │         Virtual Machines        │                     │              │
 │  │  ┌──────────────────────────────▼──────────────────┐  │              │
-│  │  │{{CONTROL_PLANE_HOSTNAME}} ({{CONTROL_PLANE_IP}})│  │              │
+│  │  │kubernetes-control-plane-node ({{CONTROL_PLANE_IP}})│  │              │
 │  │  │  ┌────────────┐  ┌──────────┐  ┌──────────┐     │  │              │
 │  │  │  │   Jenkins  │  │ Argo CD  │  │   K3s    │     │  │              │
 │  │  │  │  (CI)      │  │  (CD)    │  │ Control  │     │  │              │
@@ -181,7 +181,7 @@ A complete local GitOps pipeline demonstrating enterprise-grade CI/CD practices:
 │  │  └─────────────────────────────────────────────────┘  │              │
 │  │                                                       │              │
 │  │  ┌──────────────────────────────────────────────┐     │              │
-│  │  │    {{WORKER_HOSTNAME}} ({{WORKER_NODE_IP}})  │     │              │
+│  │  │    kubernetes-worker-node ({{WORKER_NODE_IP}})  │     │              │
 │  │  │  ┌────────────┐  ┌──────────┐  ┌──────────┐  │     │              │
 │  │  │  │  flaskapp  │  │   K3s    │  │  Docker  │  │     │              │
 │  │  │  │   (App)    │  │  Agent   │  │          │  │     │              │
@@ -192,7 +192,7 @@ A complete local GitOps pipeline demonstrating enterprise-grade CI/CD practices:
 │  ┌──────────────────────────────────────────────────────────────────┐   │
 │  │              Git Repositories (GitHub)                           │   │
 │  │  ┌──────────────────┐  ┌──────────────────┐  ┌─────────────────┐ │   │
-│  │  │{{PROJECT_NAME}}  │  │{{PROJECT_NAME}}- │  │{{PROJECT_NAME}}-│ │   │
+│  │  │project-alpha     │  │project-alpha-    │  │project-alpha-   │ │   │
 │  │  │(Infrastructure)  |  |flaskapp (App)    │  │ manifests       │ │   │
 │  │  └──────────────────┘  └──────────────────┘  └─────────────────┘ │   │
 │  └──────────────────────────────────────────────────────────────────┘   │
@@ -333,19 +333,19 @@ echo "=== Check Complete ==="
 
 ```bash
 # Create main project directory
-mkdir -p {{PROJECT_BASE_PATH}}
-cd {{PROJECT_BASE_PATH}}
+mkdir -p ~/Desktop/gitops-training-with-runbook
+cd ~/Desktop/gitops-training-with-runbook
 
 # Create subdirectories
 mkdir -p terraform ansible/{inventory,playbooks,roles} kubernetes/{jenkins,argocd,test-apps} scripts docs
 
 # Verify structure
-tree -L 2 {{PROJECT_BASE_PATH}}
+tree -L 2 ~/Desktop/gitops-training-with-runbook
 ```
 
 **Expected Output:**
 ```
-/Users/{{LOCAL_USERNAME}}/Desktop/{{PROJECT_NAME}}
+/Users/omeryazici/Desktop/project-alpha
 ├── ansible
 │   ├── inventory
 │   ├── playbooks
@@ -362,7 +362,7 @@ tree -L 2 {{PROJECT_BASE_PATH}}
 ### Step 0.2: Initialize Git Repository
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Initialize git
 git init
@@ -428,11 +428,11 @@ git commit -m "init: Initialize project structure"
 
 ```bash
 # Option 1: Via GitHub CLI (if installed)
-gh repo create {{PROJECT_NAME}} --public --source=. --remote=origin
+gh repo create project-alpha --public --source=. --remote=origin
 
 # Option 2: Manually
 # 1. Go to https://github.com/new
-# 2. Repository name: {{PROJECT_NAME}}
+# 2. Repository name: project-alpha
 # 3. Public
 # 4. Do NOT initialize with README
 # 5. Create repository
@@ -441,7 +441,7 @@ gh repo create {{PROJECT_NAME}} --public --source=. --remote=origin
 
 ```bash
 # Link local to remote
-git remote add origin https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}.git
+git remote add origin https://github.com/omeyazic/project-alpha.git
 git branch -M main
 git push -u origin main
 ```
@@ -449,7 +449,7 @@ git push -u origin main
 **Validation:**
 ```bash
 git remote -v
-# Should show: origin  https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}.git
+# Should show: origin  https://github.com/omeyazic/project-alpha.git
 ```
 
 ### Step 0.4: Configure Git Identity
@@ -470,20 +470,20 @@ git config --global --list | grep user
 ```bash
 # Verify your customizations in YOUR working guide
 echo "=== Configuration Validation ==="
-echo "Project Name: {{PROJECT_NAME}}"
-echo "GitHub Username: {{GITHUB_USERNAME}}"
-echo "Docker Hub Username: {{DOCKERHUB_USERNAME}}"
+echo "Project Name: project-alpha"
+echo "GitHub Username: omeyazic"
+echo "Docker Hub Username: voltkruger"
 echo "Control Plane IP: {{CONTROL_PLANE_IP}}"
 echo "Worker Node IP: {{WORKER_NODE_IP}}"
-echo "Jenkins URL: http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}"
-echo "Argo CD URL: http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}"
-echo "Application URL: http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}"
+echo "Jenkins URL: http://{{CONTROL_PLANE_IP}}:30080"
+echo "Argo CD URL: http://{{CONTROL_PLANE_IP}}:30083"
+echo "Application URL: http://{{CONTROL_PLANE_IP}}:30084"
 echo "==========================="
 ```
 
 **What to Check:**
 
-✅ **Must show actual values:** `{{PROJECT_NAME}}`, `{{GITHUB_USERNAME}}`, `{{DOCKERHUB_USERNAME}}`  
+✅ **Must show actual values:** `project-alpha`, `omeyazic`, `voltkruger`  
 ✅ **OK to see placeholders:** `{{CONTROL_PLANE_IP}}`, `{{WORKER_NODE_IP}}` (updated in Phase 1.6)  
 ❌ **Still see {{ PLACEHOLDERS }}?** Go back and complete find & replace in Configuration Variables section
 
@@ -531,7 +531,7 @@ Create the main Terraform file:
 *This main Terraform file defines your infrastructure as code, specifying the provider, resources, and variables needed to provision consistent, repeatable virtual machine environments. It works by declaring the desired state of your infrastructure, which Terraform then plans and applies to create or modify resources in your chosen cloud platform.*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/terraform
+cd ~/Desktop/gitops-training-with-runbook/terraform
 
 cat > main.tf << 'EOF'
 terraform {
@@ -547,7 +547,7 @@ provider "multipass" {}
 
 # Control Plane Node
 resource "multipass_instance" "k3s_control" {
-  name   = "{{CONTROL_PLANE_HOSTNAME}}"
+  name   = "kubernetes-control-plane-node"
   cpus   = 2
   memory = "2G"
   disk   = "10G"
@@ -558,7 +558,7 @@ resource "multipass_instance" "k3s_control" {
 
 # Worker Node
 resource "multipass_instance" "k3s_worker" {
-  name   = "{{WORKER_HOSTNAME}}"
+  name   = "kubernetes-worker-plane-node"
   cpus   = 2
   memory = "2G"
   disk   = "10G"
@@ -606,7 +606,7 @@ Control plane cloud-init:
 ```bash
 cat > cloud-init-control.yaml << 'EOF'
 #cloud-config
-hostname: {{CONTROL_PLANE_HOSTNAME}}
+hostname: kubernetes-control-plane-node
 manage_etc_hosts: true
 
 users:
@@ -639,7 +639,7 @@ Worker cloud-init:
 ```bash
 cat > cloud-init-worker.yaml << 'EOF'
 #cloud-config
-hostname: {{WORKER_HOSTNAME}}
+hostname: kubernetes-worker-plane-node
 manage_etc_hosts: true
 
 users:
@@ -685,7 +685,7 @@ cat ~/.ssh/id_rsa.pub
 ### Step 1.4: Initialize and Apply Terraform
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/terraform
+cd ~/Desktop/gitops-training-with-runbook/terraform
 
 # Initialize Terraform
 terraform init
@@ -707,8 +707,8 @@ Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 Outputs:
 
 connection_info = {
-  "control_plane" = "multipass shell {{CONTROL_PLANE_HOSTNAME}}"
-  "worker" = "multipass shell {{WORKER_HOSTNAME}}"
+  "control_plane" = "multipass shell kubernetes-control-plane-node"
+  "worker" = "multipass shell kubernetes-worker-plane-node"
 }
 control_plane_ip = "{{CONTROL_PLANE_IP}}"
 worker_ip = "{{WORKER_NODE_IP}}"
@@ -726,17 +726,17 @@ multipass list
 **Expected Output:**
 ```
 Name                    State             IPv4             Image
-{{CONTROL_PLANE_HOSTNAME}}          Running           {{CONTROL_PLANE_IP}}      Ubuntu 22.04 LTS
-{{WORKER_HOSTNAME}}           Running           {{WORKER_NODE_IP}}      Ubuntu 22.04 LTS
+kubernetes-control-plane-node          Running           {{CONTROL_PLANE_IP}}      Ubuntu 22.04 LTS
+kubernetes-worker-node           Running           {{WORKER_NODE_IP}}      Ubuntu 22.04 LTS
 ```
 
 ```bash
 # Test SSH connectivity
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- hostname
-# Expected: {{CONTROL_PLANE_HOSTNAME}}
+multipass exec kubernetes-control-plane-node -- hostname
+# Expected: kubernetes-control-plane-node
 
-multipass exec {{WORKER_HOSTNAME}} -- hostname
-# Expected: {{WORKER_HOSTNAME}}
+multipass exec kubernetes-worker-node -- hostname
+# Expected: kubernetes-worker-plane-node
 ```
 
 ### Step 1.6: Discover and Update IP Addresses
@@ -751,8 +751,8 @@ multipass list
 **Expected Output:**
 ```
 Name                    State             IPv4             Image
-{{CONTROL_PLANE_HOSTNAME}}          Running           192.168.64.2      Ubuntu 22.04 LTS
-{{WORKER_HOSTNAME}}           Running           192.168.64.3      Ubuntu 22.04 LTS
+kubernetes-control-plane-node          Running           192.168.64.2      Ubuntu 22.04 LTS
+kubernetes-worker-node           Running           192.168.64.3      Ubuntu 22.04 LTS
 ```
 
 **Note the actual IP addresses** - they will likely be `192.168.64.x` on Mac (NOT the `192.168.2.x` placeholders).
@@ -761,8 +761,8 @@ Name                    State             IPv4             Image
 
 ```bash
 # Store the IPs for easy reference
-ACTUAL_CONTROL_IP=$(multipass list | grep {{CONTROL_PLANE_HOSTNAME}} | awk '{print $3}')
-ACTUAL_WORKER_IP=$(multipass list | grep {{WORKER_HOSTNAME}} | awk '{print $3}')
+ACTUAL_CONTROL_IP=$(multipass list | grep kubernetes-control-plane-node | awk '{print $3}')
+ACTUAL_WORKER_IP=$(multipass list | grep kubernetes-worker-node | awk '{print $3}')
 
 echo "Control Plane IP: $ACTUAL_CONTROL_IP"
 echo "Worker Node IP: $ACTUAL_WORKER_IP"
@@ -792,7 +792,7 @@ ping -c 2 $ACTUAL_WORKER_IP
 ### Step 1.7: Commit Infrastructure Code
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 git add terraform/
 git commit -m "feat(terraform): Add VM provisioning with Multipass"
@@ -835,7 +835,7 @@ git push origin main
 ### Step 2.1: Create Ansible Inventory
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/ansible
+cd ~/Desktop/gitops-training-with-runbook/ansible
 
 # Create inventory file
 
@@ -849,14 +849,14 @@ all:
       children:
         control_plane:
           hosts:
-            {{CONTROL_PLANE_HOSTNAME}}:
+            kubernetes-control-plane-node:
               ansible_host: {{ANSIBLE_CONTROL_IP}}
               ansible_user: ubuntu
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
               node_ip: {{ANSIBLE_CONTROL_IP}}
         workers:
           hosts:
-            {{WORKER_HOSTNAME}}:
+            kubernetes-worker-plane-node:
               ansible_host: {{ANSIBLE_WORKER_IP}}
               ansible_user: ubuntu
               ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
@@ -886,7 +886,7 @@ EOF
 ### Step 2.3: Test Ansible Connectivity
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Ping all hosts
 ansible k3s_cluster -i ansible/inventory/hosts.yml -m ping
@@ -894,11 +894,11 @@ ansible k3s_cluster -i ansible/inventory/hosts.yml -m ping
 
 **Expected Output:**
 ```
-{{CONTROL_PLANE_HOSTNAME}} | SUCCESS => {
+kubernetes-control-plane-node | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
-{{WORKER_HOSTNAME}} | SUCCESS => {
+kubernetes-worker-node | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
@@ -911,7 +911,7 @@ ansible k3s_cluster -i ansible/inventory/hosts.yml -m ping
 *This preflight checks playbook validates system prerequisites across all cluster nodes, such as memory, disk space, and network connectivity, ensuring a consistent foundation before installing Kubernetes. It works by executing a series of Ansible tasks that gather system facts and perform conditional checks, reporting any failures that could hinder a successful cluster deployment*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/ansible/playbooks
+cd ~/Desktop/gitops-training-with-runbook/ansible/playbooks
 
 cat > preflight-checks.yml << 'EOF'
 ---
@@ -1059,7 +1059,7 @@ ansible k3s_cluster -i ansible/inventory/hosts.yml -a "uptime"
 ### Step 2.7: Commit Configuration Code
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 git add ansible/
 git commit -m "feat(ansible): Add system preparation for Kubernetes"
@@ -1096,7 +1096,7 @@ git push origin main
 *This playbook installs and configures the K3s control plane on the designated server node, setting up the cluster's management components and generating the join token for workers. It works by executing a remote installation script with specific flags for the server role and then securely distributing the cluster access token to your local Ansible control node for subsequent steps.*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/ansible/playbooks
+cd ~/Desktop/gitops-training-with-runbook/ansible/playbooks
 
 cat > install-k3s-server.yml << 'EOF'
 ---
@@ -1112,8 +1112,8 @@ cat > install-k3s-server.yml << 'EOF'
 
     - name: Install K3s server
       shell: |
-        INSTALL_K3S_VERSION={{K3S_VERSION}} \
-        K3S_TOKEN={{K3S_TOKEN}} \
+        INSTALL_K3S_VERSION=v1.28.5+k3s1 \
+        K3S_TOKEN=my-secret-token \
         sh /tmp/k3s-install.sh server \
           --write-kubeconfig-mode=644 \
           --node-ip={{ node_ip }} \
@@ -1128,7 +1128,7 @@ cat > install-k3s-server.yml << 'EOF'
         timeout: 300
 
     - name: Wait for node to be ready
-      shell: kubectl wait --for=condition=Ready node/{{CONTROL_PLANE_HOSTNAME}} --timeout=300s
+      shell: kubectl wait --for=condition=Ready node/kubernetes-control-plane-node --timeout=300s
       retries: 5
       delay: 10
       register: result
@@ -1163,12 +1163,12 @@ ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/install-k3s-se
 **Expected Output:**
 ```
 TASK [Display node token]
-ok: [{{CONTROL_PLANE_HOSTNAME}}] => {
-    "msg": "Node token: K10xxxxxxxxxxxxxxxxxxxx::server:{{K3S_TOKEN}}"
+ok: [kubernetes-control-plane-node] => {
+    "msg": "Node token: K10xxxxxxxxxxxxxxxxxxxx::server:my-secret-token"
 }
 
 PLAY RECAP
-{{CONTROL_PLANE_HOSTNAME}}: ok=7   changed=3   failed=0
+kubernetes-control-plane-node: ok=7   changed=3   failed=0
 ```
 
 **⏱️ Wait Time:** 2-3 minutes for K3s installation
@@ -1185,7 +1185,7 @@ cat > install-k3s-agent.yml << 'EOF'
   become: yes
   vars:
     k3s_server_ip: "{{CONTROL_PLANE_IP}}"
-    k3s_token: "{{K3S_TOKEN}}"
+    k3s_token: "my-secret-token"
   tasks:
     - name: Download K3s installation script
       get_url:
@@ -1195,7 +1195,7 @@ cat > install-k3s-agent.yml << 'EOF'
 
     - name: Install K3s agent
       shell: |
-        INSTALL_K3S_VERSION={{K3S_VERSION}} \
+        INSTALL_K3S_VERSION=v1.28.5+k3s1 \
         K3S_URL=https://{{ k3s_server_ip }}:6443 \
         K3S_TOKEN={{ k3s_token }} \
         sh /tmp/k3s-install.sh agent \
@@ -1237,19 +1237,19 @@ ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/install-k3s-ag
 *This step secures the cluster's administrative connection by copying the kubeconfig file from the control plane to your local machine and updating the server address to the node's accessible IP. Execute commands to transfer the file, replace the localhost IP, and set an environment variable, enabling your local kubectl to authenticate and manage the remote Kubernetes cluster.*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Copy kubeconfig from control plane
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo cat /etc/rancher/k3s/k3s.yaml > kubeconfig
+multipass exec kubernetes-control-plane-node -- sudo cat /etc/rancher/k3s/k3s.yaml > kubeconfig
 
 # Update server IP in kubeconfig
 sed -i '' 's/127.0.0.1/{{CONTROL_PLANE_IP}}/g' kubeconfig
 
 # Set KUBECONFIG environment variable
-export KUBECONFIG={{PROJECT_BASE_PATH}}/kubeconfig
+export KUBECONFIG=~/Desktop/gitops-training-with-runbook/kubeconfig
 
 # Add to your shell profile for persistence
-echo "export KUBECONFIG={{PROJECT_BASE_PATH}}/kubeconfig" >> ~/.zshrc
+echo "export KUBECONFIG=~/Desktop/gitops-training-with-runbook/kubeconfig" >> ~/.zshrc
 ```
 
 ### Step 3.4: Verify Cluster
@@ -1268,8 +1268,8 @@ kubectl get nodes
 **Expected Output:**
 ```
 NAME                          STATUS   ROLES                       AGE     VERSION
-{{CONTROL_PLANE_HOSTNAME}}    Ready    control-plane,etcd,master   5m      {{K3S_VERSION}}
-{{WORKER_HOSTNAME}}           Ready    <none>                      2m      {{K3S_VERSION}}
+kubernetes-control-plane-node    Ready    control-plane,etcd,master   5m      v1.28.5+k3s1
+kubernetes-worker-node           Ready    <none>                      2m      v1.28.5+k3s1
 ```
 
 ```bash
@@ -1313,7 +1313,7 @@ kubectl delete pod nginx-test
 ### Step 3.6: Commit K3s Playbooks
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 git add ansible/playbooks/install-k3s-*.yml
 git commit -m "feat(k3s): Add K3s cluster installation playbooks"
@@ -1350,16 +1350,16 @@ git push origin main
 *Creating a dedicated namespace for Jenkins isolates its components and resources from other applications in the cluster, providing a clear administrative boundary and reducing potential conflicts.* 
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/kubernetes/jenkins
+cd ~/Desktop/gitops-training-with-runbook/kubernetes/jenkins
 
 # Create namespace manifest
 cat > namespace.yaml << 'EOF'
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{JENKINS_NAMESPACE}}
+  name: jenkins
   labels:
-    name: {{JENKINS_NAMESPACE}}
+    name: jenkins
     purpose: ci-cd
 EOF
 
@@ -1367,7 +1367,7 @@ EOF
 kubectl apply -f namespace.yaml
 
 # Verify
-kubectl get namespace {{JENKINS_NAMESPACE}}
+kubectl get namespace jenkins
 ```
 
 ### Step 4.2: Create Jenkins PVC
@@ -1380,7 +1380,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jenkins-pvc
-  namespace: {{JENKINS_NAMESPACE}}
+  namespace: jenkins
 spec:
   accessModes:
     - ReadWriteOnce
@@ -1393,7 +1393,7 @@ EOF
 kubectl apply -f pvc.yaml
 
 # Verify PVC
-kubectl get pvc -n {{JENKINS_NAMESPACE}}
+kubectl get pvc -n jenkins
 ```
 
 **Expected:** `STATUS: Bound`
@@ -1408,7 +1408,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: jenkins
-  namespace: {{JENKINS_NAMESPACE}}
+  namespace: jenkins
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1436,13 +1436,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: jenkins
-    namespace: {{JENKINS_NAMESPACE}}
+    namespace: jenkins
 EOF
 
 kubectl apply -f rbac.yaml
 
 # Verify
-kubectl get serviceaccount -n {{JENKINS_NAMESPACE}}
+kubectl get serviceaccount -n jenkins
 kubectl get clusterrole jenkins
 kubectl get clusterrolebinding jenkins
 ```
@@ -1511,10 +1511,10 @@ EOF
 docker login
 
 # Build image
-docker build -t {{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}:lts .
+docker build -t voltkruger/my-jenkins-image:lts .
 
 # Push to Docker Hub (private repository)
-docker push {{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}:lts
+docker push voltkruger/my-jenkins-image:lts
 ```
 
 **⏱️ Build time:** 3-5 minutes
@@ -1536,7 +1536,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins
-  namespace: {{JENKINS_NAMESPACE}}
+  namespace: jenkins
 spec:
   replicas: 1
   selector:
@@ -1552,7 +1552,7 @@ spec:
       - name: dockerhub-credentials
       containers:
       - name: jenkins
-        image: {{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}:lts
+        image: voltkruger/my-jenkins-image:lts
         ports:
         - containerPort: 8080
           name: http
@@ -1602,7 +1602,7 @@ Apply deployment:
 kubectl apply -f deployment.yaml
 
 # Watch pod creation
-kubectl get pods -n {{JENKINS_NAMESPACE}} -w
+kubectl get pods -n jenkins -w
 ```
 
 **Wait until STATUS = Running** (Ctrl+C to exit watch)
@@ -1617,7 +1617,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jenkins
-  namespace: {{JENKINS_NAMESPACE}}
+  namespace: jenkins
 spec:
   type: NodePort
   selector:
@@ -1626,31 +1626,31 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-      nodePort: {{JENKINS_HTTP_PORT}}
+      nodePort: 30080
     - name: agent
       port: 50000
       targetPort: 50000
-      nodePort: {{JENKINS_AGENT_PORT}}
+      nodePort: 30081
 EOF
 
 kubectl apply -f service.yaml
 
 # Verify service
-kubectl get svc -n {{JENKINS_NAMESPACE}}
+kubectl get svc -n jenkins
 ```
 
 ### Step 4.9: Access Jenkins
 
 ```bash
 # Get Jenkins initial admin password
-kubectl exec -n {{JENKINS_NAMESPACE}} $(kubectl get pods -n {{JENKINS_NAMESPACE}} -l app=jenkins -o jsonpath='{.items[0].metadata.name}') -- cat /var/jenkins_home/secrets/initialAdminPassword
+kubectl exec -n jenkins $(kubectl get pods -n jenkins -l app=jenkins -o jsonpath='{.items[0].metadata.name}') -- cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
 **Save this password!**
 
 Open browser:
 ```
-http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}
+http://{{CONTROL_PLANE_IP}}:30080
 ```
 
 **Setup Jenkins:**
@@ -1662,7 +1662,7 @@ http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}
    - Password: `admin` (or your choice)
    - Full name: `Admin User`
    - Email: `admin@example.com`
-5. Keep default Jenkins URL: `http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}/`
+5. Keep default Jenkins URL: `http://{{CONTROL_PLANE_IP}}:30080/`
 6. Click "Start using Jenkins"
 
 ### Step 4.9.5: Configure Kubernetes Cloud in Jenkins
@@ -1699,17 +1699,17 @@ ERROR: Unable to create pod
      - ℹ️ When blank, Jenkins auto-detects the in-cluster Kubernetes API
    - **Kubernetes server certificate key:** Leave blank
    - **Disable https certificate check:** ✅ **Check this box** (⚠️ For production, use proper TLS certificates instead
-   - **Kubernetes Namespace:** `{{JENKINS_NAMESPACE}}` (e.g., `jenkins`)
+   - **Kubernetes Namespace:** `jenkins` (e.g., `jenkins`)
      - This is where Jenkins will create build pods
    - **Credentials:** Leave as `- none -`
      - ℹ️ Jenkins uses the service account token automatically (we created this in Step 4.3)
    - **WebSocket:** ✅ **Check this box** (recommended for better performance)
 
    **Jenkins Settings:**
-   - **Jenkins URL:** `http://jenkins.{{JENKINS_NAMESPACE}}.svc.cluster.local:8080`
+   - **Jenkins URL:** `http://jenkins.jenkins.svc.cluster.local:8080`
      - This is the internal Kubernetes service DNS name
      - Format: `http://SERVICE_NAME.NAMESPACE.svc.cluster.local:PORT`
-   - **Jenkins tunnel:** `jenkins.{{JENKINS_NAMESPACE}}.svc.cluster.local:50000`
+   - **Jenkins tunnel:** `jenkins.jenkins.svc.cluster.local:50000`
      - This is for JNLP agent communication
      - Format: `SERVICE_NAME.NAMESPACE.svc.cluster.local:AGENT_PORT`
 
@@ -1738,7 +1738,7 @@ ERROR: Unable to create pod
 
 ```bash
 # Verify Jenkins can access Kubernetes API
-kubectl logs -n {{JENKINS_NAMESPACE}} deployment/jenkins --tail=20
+kubectl logs -n jenkins deployment/jenkins --tail=20
 
 # Should not see any Kubernetes API errors
 ```
@@ -1781,29 +1781,29 @@ kubectl logs -n {{JENKINS_NAMESPACE}} deployment/jenkins --tail=20
 
 ```bash
 # Check Jenkins service account exists
-kubectl get serviceaccount jenkins -n {{JENKINS_NAMESPACE}}
+kubectl get serviceaccount jenkins -n jenkins
 
 # Check RBAC binding
 kubectl describe clusterrolebinding jenkins
 
 # Check Jenkins can reach Kubernetes API
-kubectl exec -n {{JENKINS_NAMESPACE}} deployment/jenkins -- curl -k https://kubernetes.default.svc.cluster.local:443
+kubectl exec -n jenkins deployment/jenkins -- curl -k https://kubernetes.default.svc.cluster.local:443
 
 # Check Jenkins logs for errors
-kubectl logs -n {{JENKINS_NAMESPACE}} deployment/jenkins | grep -i kubernetes
+kubectl logs -n jenkins deployment/jenkins | grep -i kubernetes
 ```
 
 **If builds fail to spawn pods later:**
 
 ```bash
 # Watch pod creation in real-time
-kubectl get pods -n {{JENKINS_NAMESPACE}} -w
+kubectl get pods -n jenkins -w
 
 # Check recent events
-kubectl get events -n {{JENKINS_NAMESPACE}} --sort-by='.lastTimestamp' | tail -20
+kubectl get events -n jenkins --sort-by='.lastTimestamp' | tail -20
 
 # Verify service account token is mounted
-kubectl exec -n {{JENKINS_NAMESPACE}} deployment/jenkins -- ls -la /var/run/secrets/kubernetes.io/serviceaccount/
+kubectl exec -n jenkins deployment/jenkins -- ls -la /var/run/secrets/kubernetes.io/serviceaccount/
 ```
 
 **✅ Verification Checklist:**
@@ -1838,13 +1838,13 @@ Create Docker Hub credentials as a Kubernetes secret. This secret is used for:
 # Create Docker registry secret in Jenkins namespace
 kubectl create secret docker-registry dockerhub-credentials \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=YOUR_DOCKERHUB_TOKEN \
   --docker-email=YOUR_EMAIL \
-  -n {{JENKINS_NAMESPACE}}
+  -n jenkins
 
 # Verify secret created
-kubectl get secret dockerhub-credentials -n {{JENKINS_NAMESPACE}}
+kubectl get secret dockerhub-credentials -n jenkins
 ```
 
 ***If you have skipped here to create dockerhub token and you are done you can now return to line 1594 to continue with the deployment***
@@ -1872,16 +1872,16 @@ In Jenkins UI:
 ### Step 4.11: Install Argo CD
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/kubernetes/argocd
+cd ~/Desktop/gitops-training-with-runbook/kubernetes/argocd
 
 # Create namespace
-kubectl create namespace {{ARGOCD_NAMESPACE}}
+kubectl create namespace argocd
 
 # Install Argo CD
-kubectl apply -n {{ARGOCD_NAMESPACE}} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 # Wait for pods to be ready
-kubectl wait --for=condition=Ready pods --all -n {{ARGOCD_NAMESPACE}} --timeout=300s
+kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s
 ```
 
 **⏱️ Wait Time:** 3-5 minutes
@@ -1889,7 +1889,7 @@ kubectl wait --for=condition=Ready pods --all -n {{ARGOCD_NAMESPACE}} --timeout=
 Verify installation:
 
 ```bash
-kubectl get pods -n {{ARGOCD_NAMESPACE}}
+kubectl get pods -n argocd
 ```
 
 **Expected:** All pods in `Running` state
@@ -1900,25 +1900,25 @@ kubectl get pods -n {{ARGOCD_NAMESPACE}}
 
 ```bash
 # Patch service to use NodePort
-kubectl patch svc argocd-server -n {{ARGOCD_NAMESPACE}} -p '{"spec":{"type":"NodePort","ports":[{"name":"http","port":80,"targetPort":8080,"nodePort":{{ARGOCD_HTTP_PORT}}},{"name":"https","port":443,"targetPort":8080,"nodePort":{{ARGOCD_HTTPS_PORT}}}]}}'
+kubectl patch svc argocd-server -n argocd -p '{"spec":{"type":"NodePort","ports":[{"name":"http","port":80,"targetPort":8080,"nodePort":30083},{"name":"https","port":443,"targetPort":8080,"nodePort":30082}}]}}'
 
 # Verify service
-kubectl get svc -n {{ARGOCD_NAMESPACE}} argocd-server
+kubectl get svc -n argocd argocd-server
 ```
 
 ### Step 4.13: Get Argo CD Admin Password
 
 ```bash
 # Get initial admin password
-kubectl -n {{ARGOCD_NAMESPACE}} get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
 **Save this password!**
 
 Access Argo CD:
 ```
-http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  (HTTP)
-https://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTPS_PORT}} (HTTPS - accept self-signed cert)
+http://{{CONTROL_PLANE_IP}}:30083  (HTTP)
+https://{{CONTROL_PLANE_IP}}:30082} (HTTPS - accept self-signed cert)
 ```
 
 **Login:**
@@ -1932,7 +1932,7 @@ https://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTPS_PORT}} (HTTPS - accept self-signed c
 brew install argocd
 
 # Login via CLI
-argocd login {{CONTROL_PLANE_IP}}:{{ARGOCD_HTTPS_PORT}} --insecure --username admin --password YOUR_PASSWORD
+argocd login {{CONTROL_PLANE_IP}}:30082} --insecure --username admin --password YOUR_PASSWORD
 
 # Change password (optional)
 argocd account update-password
@@ -1941,7 +1941,7 @@ argocd account update-password
 ### Step 4.15: Commit Jenkins and Argo CD Manifests
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Add Jenkins files (but not kubectl binary)
 echo "kubernetes/jenkins/kubectl" >> .gitignore
@@ -1956,12 +1956,12 @@ git push origin main
 
 ```bash
 # Check all resources
-kubectl get all -n {{JENKINS_NAMESPACE}}
-kubectl get all -n {{ARGOCD_NAMESPACE}}
+kubectl get all -n jenkins
+kubectl get all -n argocd
 
 # Test connectivity
-curl -I http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}  # Jenkins
-curl -I http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  # Argo CD HTTP
+curl -I http://{{CONTROL_PLANE_IP}}:30080  # Jenkins
+curl -I http://{{CONTROL_PLANE_IP}}:30083  # Argo CD HTTP
 ```
 
 **Expected:** HTTP responses from both services
@@ -2006,7 +2006,7 @@ curl -I http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  # Argo CD HTTP
 *Installing HashiCorp Vault with Helm deploys a complete secret management system into your cluster, providing a centralized, encrypted store for credentials, certificates, and keys. It works by adding the HashiCorp Helm repository and executing the chart with a minimal configuration, which creates the necessary StatefulSet, services, and configuration for a production-ready Vault instance in development mode.*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/kubernetes
+cd ~/Desktop/gitops-training-with-runbook/kubernetes
 mkdir -p vault
 cd vault
 
@@ -2082,7 +2082,7 @@ EOF
 # Create role binding policy to Service Account
 vault write auth/kubernetes/role/flaskapp \
     bound_service_account_names=default \
-    bound_service_account_namespaces={{APP_NAMESPACE}} \
+    bound_service_account_namespaces=test-app-ns \
     policies=flaskapp-policy \
     ttl=24h
 ```
@@ -2096,7 +2096,7 @@ exit
 ```
 
 **What this does:**
-- Pods in `{{APP_NAMESPACE}}` with `default` SA can authenticate to Vault
+- Pods in `test-app-ns` with `default` SA can authenticate to Vault
 - They can read secrets from `secret/flaskapp/*` path only
 - Access tokens expire after 24 hours
 
@@ -2162,7 +2162,7 @@ environment     production
 *Saving the Vault configuration as a Kubernetes ConfigMap persists the setup commands for the Kubernetes authentication method and secret policies, ensuring they can be re-applied consistently if the Vault pod is recreated. It works by storing the executed Vault CLI commands in a ConfigMap manifest, which acts as documented, version-controlled runbook that can be referenced or reapplied during recovery or scaling scenario*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/kubernetes/vault
+cd ~/Desktop/gitops-training-with-runbook/kubernetes/vault
 ```
 ### Create installation script
 
@@ -2215,7 +2215,7 @@ POLICY
 
 kubectl exec -it vault-0 -n vault -- vault write auth/kubernetes/role/flaskapp \
     bound_service_account_names=default \
-    bound_service_account_namespaces={{APP_NAMESPACE}} \
+    bound_service_account_namespaces=test-app-ns \
     policies=flaskapp-policy \
     ttl=24h
 
@@ -2251,7 +2251,7 @@ EOF
 **Commit configuration:**
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 git add kubernetes/vault/
 git commit -m "feat(vault): Add HashiCorp Vault for secret management"
@@ -2287,9 +2287,9 @@ kubectl exec -it vault-0 -n vault -- vault read auth/kubernetes/role/flaskapp
 │ PHASE 5: GITOPS PIPELINE ◄── YOU ARE HERE                        │
 ├──────────────────────────────────────────────────────────────────┤
 │  Code → Jenkins → Test → Lint → Build → Push → Update → Deploy   │
-│   ┌────┐   ┌──┐   ┌───┐  ┌───┐  ┌──┐  ┌───┐  ┌────┐   ┌───┐      │
-│   │Dev │──→│CI│──→│Tst│─→│Lnt│─→│Bld│→│Hub│─→│Mfst│──→│CD │      │
-│   └────┘   └──┘   └───┘  └───┘  └──┘  └───┘  └────┘   └───┘      │
+│   ┌────┐   ┌──┐   ┌───┐  ┌───┐  ┌───┐  ┌───┐  ┌────┐   ┌───┐     │
+│   │Dev │──→│CI│──→│Tst│─→│Lnt│─→│Bld│─→│Hub│─→│Mfst│──→│CD │     │
+│   └────┘   └──┘   └───┘  └───┘  └───┘  └───┘  └────┘   └───┘     │
 │    Edit    Pod   pytest  flake8 Kaniko  Push  GitOps   Sync      │
 │                                                                  │
 │  Quality Gates: Test + Lint before build • Rootless builds       │
@@ -2307,16 +2307,18 @@ kubectl exec -it vault-0 -n vault -- vault read auth/kubernetes/role/flaskapp
 - GitOps principles with Argo CD
 - Secure pipeline design without privileged access
 
-**📋 Checkpoint:** Verify `{{GITHUB_USERNAME}}`, `{{DOCKERHUB_USERNAME}}`, and `{{PROJECT_NAME}}` show actual values.
+**📋 Checkpoint:** Verify `omeyazic`, `voltkruger`, and `project-alpha` show actual values.
 
 ### Part A: Application Repository
 
 ### Step 5.1: Create Application Repository
 
+*We will create a dedicated Git repository to host a sample application source code, serving as the starting point for the CI/CD pipeline.*
+
 ```bash
 # Create app directory
-mkdir -p ~/Desktop/{{PROJECT_NAME}}-flaskapp
-cd ~/Desktop/{{PROJECT_NAME}}-flaskapp
+mkdir -p ~/Desktop/project-alpha-flaskapp
+cd ~/Desktop/project-alpha-flaskapp
 
 # Initialize git
 git init
@@ -2376,6 +2378,8 @@ EOF
 ```
 
 ### Step 5.4: Create Dockerfile
+
+*This Dockerfile defines the container image for your application by specifying the base image, copying the source code, and installing dependencies to create a portable and consistent runtime environment. It works as a blueprint that the build system will follow to package your application into an immutable container, ready to be pushed to a registry and deployed.*
 
 ```bash
 cat > Dockerfile << 'EOF'
@@ -2460,8 +2464,8 @@ spec:
     }
     
     environment {
-        DOCKER_IMAGE = '{{DOCKERHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp'
-        GITOPS_REPO = 'https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git'
+        DOCKER_IMAGE = 'voltkruger/project-alpha-flaskapp'
+        GITOPS_REPO = 'https://github.com/omeyazic/project-alpha-manifests.git'
         APP_VERSION = "${BUILD_NUMBER}"
     }
     
@@ -2546,9 +2550,9 @@ spec:
                         )]) {
                             sh """
                                 apk add --no-cache sed
-                                rm -rf {{PROJECT_NAME}}-manifests
-                                git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git
-                                cd {{PROJECT_NAME}}-manifests/{{APP_NAME}}
+                                rm -rf project-alpha-manifests
+                                git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/omeyazic/project-alpha-manifests.git
+                                cd project-alpha-manifests/test-application
                                 
                                 sed -i 's|image: .*|image: ${DOCKER_IMAGE}:${APP_VERSION}|' deployment.yaml
                                 
@@ -2556,7 +2560,7 @@ spec:
                                 git config user.name "Jenkins CI"
                                 git add deployment.yaml
                                 git commit -m "Update image to version ${APP_VERSION}"
-                                git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git main
+                                git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/omeyazic/project-alpha-manifests.git main
                             """
                         }
                     }
@@ -2597,7 +2601,7 @@ EOF
 
 ```bash
 cat > README.md << 'EOF'
-# {{APP_IMAGE_NAME}} GitOps Application
+# test-app-container-image GitOps Application
 
 Simple Flask application demonstrating GitOps workflow.
 
@@ -2615,8 +2619,8 @@ Access: http://localhost:5000
 ## Docker Build
 
 ```bash
-docker build -t {{APP_IMAGE_NAME}}:1.0.0 .
-docker run -p 5000:5000 {{APP_IMAGE_NAME}}:1.0.0
+docker build -t test-app-container-image:1.0.0 .
+docker run -p 5000:5000 test-app-container-image:1.0.0
 ```
 
 ## Environment Variables
@@ -2628,7 +2632,7 @@ EOF
 ### Step 5.7: Create GitHub Repository & Push Application to GitHub
 
 ```bash
-cd ~/Desktop/{{PROJECT_NAME}}-flaskapp
+cd ~/Desktop/project-alpha-flaskapp
 
 # Create .gitignore
 cat > .gitignore << 'EOF'
@@ -2643,7 +2647,7 @@ EOF
 ```bash
 
 # 1. Go to https://github.com/new
-# 2. Repository name: {{PROJECT_NAME}}-flaskapp
+# 2. Repository name: project-alpha-flaskapp
 # 3. Visibility: **Private**
 # 4. Do NOT initialize with README
 # 5. Create repository
@@ -2659,7 +2663,7 @@ git add .
 git commit -m "init: Sample Flask application initial commit"
 
 # Create GitHub repo and push
-git remote add origin https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp.git
+git remote add origin https://github.com/omeyazic/project-alpha-flaskapp.git
 git branch -M main
 git push -u origin main
 ```
@@ -2668,9 +2672,12 @@ git push -u origin main
 
 ### Step 5.8: Create GitOps Repository
 
+*Here we establish a separate Git repository dedicated solely to storing declarative Kubernetes manifests, which serves as the single source of truth for your cluster's desired state in the GitOps workflow.  Argo CD will continuously monitor and sync any changes to the live cluster.*
+
+
 ```bash
-mkdir -p ~/Desktop/{{PROJECT_NAME}}-manifests/{{APP_NAME}}
-cd ~/Desktop/{{PROJECT_NAME}}-manifests
+mkdir -p ~/Desktop/project-alpha-manifests/test-application
+cd ~/Desktop/project-alpha-manifests
 
 git init
 ```
@@ -2679,38 +2686,50 @@ git init
 
 **Secret Injection:** These manifests use Vault Agent Injector annotations. Vault automatically injects a sidecar container that fetches secrets and writes them to `/vault/secrets/config`. The application sources this file at startup.
 
+
+#### Step 5.9.1: Create Namespace
+*This namespace manifest creates a logical boundary within your Kubernetes cluster to isolate your application's resources, providing a clean environment for deployment and simplifying access control and resource management.*
+
+
 ```bash
-cd {{APP_NAME}}
+cd test-application
 
 # Namespace
 cat > namespace.yaml << 'EOF'
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{APP_NAMESPACE}}
+  name: test-app-ns
   labels:
-    name: {{APP_NAMESPACE}}
+    name: test-app-ns
     managed-by: argocd
 EOF
+```
+#### Step 5.9.2: Create Deployment
+*This deployment manifest defines the scalable pod specification for the application, including container image, resource limits, health checks, and integration with Vault for automatic secret injection at runtime. It works by declaring the desired state of the application pods, complete with annotations that trigger the Vault agent sidecar to fetch and expose secrets as environment variables, ensuring secure and dynamic configuration*
+
+
+```bash
+cd test-application
 
 # Deployment with Vault integration
 cat > deployment.yaml << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{APP_NAME}}
-  namespace: {{APP_NAMESPACE}}
+  name: test-application
+  namespace: test-app-ns
   labels:
-    app: {{APP_NAME}}
+    app: test-application
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: {{APP_NAME}}
+      app: test-application
   template:
     metadata:
       labels:
-        app: {{APP_NAME}}
+        app: test-application
       annotations:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "flaskapp"
@@ -2725,8 +2744,8 @@ spec:
       imagePullSecrets:
       - name: dockerhub-secret
       containers:
-      - name: {{APP_NAME}}
-        image: {{DOCKERHUB_USERNAME}}/{{APP_IMAGE_NAME}}:1
+      - name: test-application
+        image: voltkruger/test-app-container-image:1
         ports:
         - containerPort: 5000
           name: http
@@ -2755,30 +2774,38 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
 EOF
+```
+
+#### Step 5.9.2: Create Service
+*This service manifest exposes the application internally within the cluster and externally via a NodePort, providing a stable network endpoint to route traffic to the running application pods. It works by defining a Kubernetes Service resource that selects pods based on labels and maps a cluster node port to the container's internal port, making the application accessible for testing and validation.*
+
+
+```bash
+cd test-application
 
 # Service
 cat > service.yaml << 'EOF'
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{APP_NAME}}
-  namespace: {{APP_NAMESPACE}}
+  name: test-application
+  namespace: test-app-ns
 spec:
   type: NodePort
   selector:
-    app: {{APP_NAME}}
+    app: test-application
   ports:
     - name: http
       port: 80
       targetPort: 5000
-      nodePort: {{APP_HTTP_PORT}}
+      nodePort: 30084
 EOF
 ```
 
 ### Step 5.10: Create Repository README
 
 ```bash
-cd ~/Desktop/{{PROJECT_NAME}}-manifests
+cd ~/Desktop/project-alpha-manifests
 
 cat > README.md << 'EOF'
 # GitOps Manifests Repository
@@ -2788,7 +2815,7 @@ Kubernetes manifests managed by Argo CD.
 ## Structure
 
 ```
-{{APP_NAME}}/
+test-application/
 ├── namespace.yaml    # Namespace definition
 ├── deployment.yaml   # Application deployment
 └── service.yaml      # Service definition
@@ -2811,7 +2838,7 @@ EOF
 ```bash
 
 # 1. Go to https://github.com/new
-# 2. Repository name: {{PROJECT_NAME}}-manifests
+# 2. Repository name: project-alpha-manifests
 # 3. Private
 # 4. Do NOT initialize with README
 # 5. Create repository
@@ -2821,13 +2848,13 @@ EOF
 
 
 ```bash
-cd ~/Desktop/{{PROJECT_NAME}}-manifests
+cd ~/Desktop/project-alpha-manifests
 
 git add .
 git commit -m "init: Initial Kubernetes manifests"
 
 # Create GitHub repo and push
-git remote add origin https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git
+git remote add origin https://github.com/omeyazic/project-alpha-manifests.git
 git branch -M main
 git push -u origin main
 ```
@@ -2836,16 +2863,19 @@ git push -u origin main
 
 ### Step 5.12: Create Jenkins Pipeline Job
 
-In Jenkins UI (http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}):
+*We configure a pipeline job within the Jenkins web interface that connects to the application repository and executes the defined Jenkinsfile, automating the entire CI/CD process from code commit to deployment. Pushing the application code to repository triggers Jenkins to clone the code and run the pipeline stages within dynamically provisioned Kubernetes pods.*
+
+
+In Jenkins UI (http://{{CONTROL_PLANE_IP}}:30080):
 
 1. Click **New Item**
-2. Enter name: `{{PROJECT_NAME}}-flaskapp-pipeline`
+2. Enter name: `project-alpha-flaskapp-pipeline`
 3. Select **Pipeline**
 4. Click **OK**
 
 5. In **General** section:
    - ✅ GitHub project
-   - Project URL: `https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp`
+   - Project URL: `https://github.com/omeyazic/project-alpha-flaskapp`
 
 6. In **Build Triggers** section:
    - ✅ Poll SCM
@@ -2854,7 +2884,7 @@ In Jenkins UI (http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}):
 7. In **Pipeline** section:
    - Definition: `Pipeline script from SCM`
    - SCM: `Git`
-   - Repository URL: `https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp.git`
+   - Repository URL: `https://github.com/omeyazic/project-alpha-flaskapp.git`
    - Credentials: Select `github-credentials`
    - Branch: `*/main`
    - Script Path: `Jenkinsfile`
@@ -2876,9 +2906,9 @@ In Jenkins UI (http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}):
 [Pipeline] podTemplate
 [Pipeline] {
 [Pipeline] node
-Created Pod: jenkins/{{PROJECT_NAME}}-flaskapp-pipeline-X-xxxxx
+Created Pod: jenkins/project-alpha-flaskapp-pipeline-X-xxxxx
 ...
-[kaniko] INFO[0045] Pushing image to {{DOCKERHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp:X
+[kaniko] INFO[0045] Pushing image to voltkruger/project-alpha-flaskapp:X
 [kaniko] INFO[0046] Pushed image to 1 destinations
 ✅ Kaniko pipeline completed! Version: X
 ```
@@ -2904,37 +2934,38 @@ Private GitHub repositories require credentials for Argo CD to sync manifests
 
 
 **Via Argo CD UI (Recommended for beginners)**
-1. Open Argo CD: http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}
+1. Open Argo CD: http://{{CONTROL_PLANE_IP}}:30083
 2. Navigate to Argo CD UI Settings → Repositories
 3. Click "Connect Repo"
 4. Configure:
    - Method: HTTPS
    - Type: git
-   - Repository URL: https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git
-   - Username: {{GITHUB_USERNAME}}
+   - Repository URL: https://github.com/omeyazic/project-alpha-manifests.git
+   - Username: omeyazic
    - Password: GitHub Personal Access Token (PAT)
 5. Verify connection status shows "Successful"
 
 ### Step 5.14: Create Argo CD Application
+*This step defines an Argo CD Application resource that links your GitOps manifest repository to your Kubernetes cluster, enabling automated synchronization of the desired state defined in Git. It works by creating a YAML manifest that specifies the source repository, target cluster, and sync policy, which Argo CD uses to continuously monitor and apply any changes, ensuring the cluster matches the version-controlled configuration.*
 
 ```bash
-cd {{PROJECT_BASE_PATH}}/kubernetes/argocd/applications
+cd ~/Desktop/gitops-training-with-runbook/kubernetes/argocd/applications
 
-cat > {{APP_NAME}}.yaml << 'EOF'
+cat > test-application.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{APP_NAME}}
-  namespace: {{ARGOCD_NAMESPACE}}
+  name: test-application
+  namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git
+    repoURL: https://github.com/omeyazic/project-alpha-manifests.git
     targetRevision: main
-    path: {{APP_NAME}}
+    path: test-application
   destination:
     server: https://kubernetes.default.svc
-    namespace: {{APP_NAMESPACE}}
+    namespace: test-app-ns
   syncPolicy:
     automated:
       prune: true
@@ -2947,10 +2978,10 @@ EOF
 Apply the application:
 
 ```bash
-kubectl apply -f {{APP_NAME}}.yaml
+kubectl apply -f test-application.yaml
 
 # Verify application created
-kubectl get application -n {{ARGOCD_NAMESPACE}}
+kubectl get application -n argocd
 ```
 ### Step 5.14b: Create Docker Registry Secret for Application Namespace
 
@@ -2976,7 +3007,7 @@ Create the Docker Hub secret in the application namespace to pull private images
 # Create Docker registry secret in application namespace
 kubectl create secret docker-registry dockerhub-secret \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=YOUR_DOCKERHUB_TOKEN \
   --docker-email=YOUR_EMAIL \
   -n sample-app-namespace
@@ -2990,10 +3021,10 @@ kubectl get secret dockerhub-secret -n sample-app-namespace
 
 ### Step 5.15: Verify in Argo CD UI
 
-Open Argo CD: http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}
+Open Argo CD: http://{{CONTROL_PLANE_IP}}:30083
 
 **You should see:**
-- Application: `{{APP_NAME}}`
+- Application: `test-application`
 - Status: `Synced` and `Healthy`
 - Resources: Namespace, Deployment, Service
 
@@ -3003,13 +3034,13 @@ Open Argo CD: http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}
 
 ```bash
 # Check pods
-kubectl get pods -n {{APP_NAMESPACE}}
+kubectl get pods -n test-app-ns
 
 # Check service
-kubectl get svc -n {{APP_NAMESPACE}}
+kubectl get svc -n test-app-ns
 ```
 
-**Expected:** 3 pods running, service with NodePort {{APP_HTTP_PORT}}
+**Expected:** 3 pods running, service with NodePort 30084
 
 **⚠️ If Pods Show `ImagePullBackOff` or `ErrImagePull`:**
 
@@ -3017,26 +3048,26 @@ Verify that the `dockerhub-secret` was created correctly in Step 5.13a:
 
 ```bash
 # Check if secret exists
-kubectl get secret dockerhub-secret -n {{APP_NAMESPACE}}
+kubectl get secret dockerhub-secret -n test-app-ns
 
 # If secret is missing, create it:
 kubectl create secret docker-registry dockerhub-secret \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=YOUR_DOCKERHUB_TOKEN \
   --docker-email=YOUR_EMAIL \
-  -n {{APP_NAMESPACE}}
+  -n test-app-ns
 
 # Verify deployment has imagePullSecrets configured
-kubectl get deployment {{APP_NAME}} -n {{APP_NAMESPACE}} -o yaml | grep -A 2 imagePullSecrets
+kubectl get deployment test-application -n test-app-ns -o yaml | grep -A 2 imagePullSecrets
 
 # If needed, restart pods to pick up the secret
-kubectl rollout restart deployment {{APP_NAME}} -n {{APP_NAMESPACE}}
+kubectl rollout restart deployment test-application -n test-app-ns
 ```
 
 Open browser:
 ```
-http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}
+http://{{CONTROL_PLANE_IP}}:30084
 ```
 
 **Expected:** Flask app showing:
@@ -3051,12 +3082,15 @@ http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}
 **Objective:** Test the complete GitOps workflow  
 **Time:** 30 minutes
 
+*This final step validates the entire automated pipeline by making a code change, pushing it to trigger the Jenkins build, and confirming that Argo CD automatically deploys the new version to your cluster. We will modify a file in your application repository, commit the change, and then monitor the Jenkins pipeline logs and Argo CD UI to observe the image build, manifest update, and subsequent sync that rolls out the updated application.*
+
+
 ### Step 6.1: End-to-End Pipeline Test
 
 **Test the complete CI/CD flow:**
 
 ```bash
-cd ~/Desktop/{{PROJECT_NAME}}-flaskapp
+cd ~/Desktop/project-alpha-flaskapp
 
 # Modify application
 cat > app.py << 'EOF'
@@ -3112,8 +3146,8 @@ git push origin main
 **Watch the automated flow:**
 
 1. **Jenkins (wait 5 minutes for SCM poll):**
-   - Go to: http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}
-   - Watch `{{PROJECT_NAME}}-flaskapp-pipeline` for new build
+   - Go to: http://{{CONTROL_PLANE_IP}}:30080
+   - Watch `project-alpha-flaskapp-pipeline` for new build
    - Or manually trigger: **Build Now**
 
 2. **Console Output:**
@@ -3122,24 +3156,24 @@ git push origin main
    - Watch: Checkout → Build → Push → Update Manifest
 
 3. **GitHub:**
-   - Go to: https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests
+   - Go to: https://github.com/omeyazic/project-alpha-manifests
    - Check commits: Should see "Update image to version X"
 
 4. **Argo CD:**
-   - Go to: http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}
-   - Watch `{{APP_NAME}}` application
+   - Go to: http://{{CONTROL_PLANE_IP}}:30083
+   - Watch `test-application` application
    - Should auto-sync within 3 minutes
 
 5. **Kubernetes:**
 ```bash
 # Watch pods rolling update
-kubectl get pods -n {{APP_NAMESPACE}} -w
+kubectl get pods -n test-app-ns -w
 ```
 
 6. **Test Application:**
 ```bash
 # Access updated app
-curl http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}
+curl http://{{CONTROL_PLANE_IP}}:30084
 ```
 
 **Expected:** New version with purple gradient background!
@@ -3154,31 +3188,31 @@ kubectl get nodes
 kubectl get namespaces
 
 # 3. Check Jenkins
-kubectl get all -n {{JENKINS_NAMESPACE}}
+kubectl get all -n jenkins
 
 # 4. Check Argo CD
-kubectl get all -n {{ARGOCD_NAMESPACE}}
+kubectl get all -n argocd
 
 # 5. Check Application
-kubectl get all -n {{APP_NAMESPACE}}
+kubectl get all -n test-app-ns
 
 # 6. Check Argo CD applications
-kubectl get applications -n {{ARGOCD_NAMESPACE}}
+kubectl get applications -n argocd
 
 # 7. Test all services
-curl -I http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}  # Jenkins
-curl -I http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}}  # Argo CD
-curl -I http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}}  # {{APP_NAME}}
+curl -I http://{{CONTROL_PLANE_IP}}:30080  # Jenkins
+curl -I http://{{CONTROL_PLANE_IP}}:30083  # Argo CD
+curl -I http://{{CONTROL_PLANE_IP}}:30084  # test-application
 
 # 8. Validate Vault integration
-kubectl get pods -n {{APP_NAMESPACE}}  # Should show READY 2/2 (app + vault-agent)
+kubectl get pods -n test-app-ns  # Should show READY 2/2 (app + vault-agent)
 
 # 9. Check secret injection
-POD_NAME=$(kubectl get pods -n {{APP_NAMESPACE}} -l app={{APP_NAME}} -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- ls /vault/secrets/
+POD_NAME=$(kubectl get pods -n test-app-ns -l app=test-application -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n test-app-ns $POD_NAME -c test-application -- ls /vault/secrets/
 
 # 10. Verify secret content
-kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- cat /vault/secrets/config
+kubectl exec -n test-app-ns $POD_NAME -c test-application -- cat /vault/secrets/config
 ```
 
 **Expected:**
@@ -3190,10 +3224,10 @@ kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- cat /vault/secret
 
 ```bash
 # Verify Vault sidecar is running
-kubectl describe pod -n {{APP_NAMESPACE}} -l app={{APP_NAME}} | grep -A 2 "vault-agent:"
+kubectl describe pod -n test-app-ns -l app=test-application | grep -A 2 "vault-agent:"
 
 # Test secret access
-kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- sh -c 'source /vault/secrets/config && echo $APP_SECRET'
+kubectl exec -n test-app-ns $POD_NAME -c test-application -- sh -c 'source /vault/secrets/config && echo $APP_SECRET'
 ```
 
 **Expected:** Shows `ProductionSecretValue2024`
@@ -3205,7 +3239,7 @@ kubectl exec -n {{APP_NAMESPACE}} $POD_NAME -c {{APP_NAME}} -- sh -c 'source /va
 ```bash
 # Test application load (10 requests)
 for i in {1..10}; do
-    curl -s http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}} | grep "Version:"
+    curl -s http://{{CONTROL_PLANE_IP}}:30084 | grep "Version:"
 done
 ```
 
@@ -3216,12 +3250,12 @@ done
 **Test Argo CD rollback capability:**
 
 In Argo CD UI:
-1. Click on `{{APP_NAME}}` application
+1. Click on `test-application` application
 2. Click the **three dots (⋮)** menu button in the upper right corner
 3. Select **History and Rollback**
 4. Select a previous revision from the list
 5. Click **Rollback**
-6. A dialog will appear: *"Auto-Sync needs to be disabled in order for rollback to occur. Are you sure you want to disable auto-sync and rollback application {{APP_NAME}}?"*
+6. A dialog will appear: *"Auto-Sync needs to be disabled in order for rollback to occur. Are you sure you want to disable auto-sync and rollback application test-application?"*
 7. Click **OK** to disable auto-sync and proceed with rollback
 
 **Expected:** Application rolls back to previous version
@@ -3238,10 +3272,10 @@ In Argo CD UI:
 
 ```bash
 # Manually scale deployment
-kubectl scale deployment {{APP_NAME}} -n {{APP_NAMESPACE}} --replicas=5
+kubectl scale deployment test-application -n test-app-ns --replicas=5
 
 # Watch Argo CD auto-heal (restore to 3 replicas)
-kubectl get pods -n {{APP_NAMESPACE}} -w
+kubectl get pods -n test-app-ns -w
 ```
 
 **Expected:** Argo CD detects drift and restores to 3 replicas within 3 minutes
@@ -3251,7 +3285,7 @@ kubectl get pods -n {{APP_NAMESPACE}} -w
 **Create final documentation:**
 
 ```bash
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Commit all Phase 5 work
 git add kubernetes/argocd/applications/
@@ -3269,23 +3303,23 @@ git push origin main
 
 ```bash
 # Step 1: Delete Argo CD applications (avoids hanging finalizers)
-kubectl delete application {{APP_NAME}} -n {{ARGOCD_NAMESPACE}}
+kubectl delete application test-application -n argocd
 
 # Step 2: Delete namespaces (this will delete all resources)
-kubectl delete namespace {{APP_NAMESPACE}}
-kubectl delete namespace {{JENKINS_NAMESPACE}}
-kubectl delete namespace {{ARGOCD_NAMESPACE}}
+kubectl delete namespace test-app-ns
+kubectl delete namespace jenkins
+kubectl delete namespace argocd
 kubectl delete namespace vault
 
 # Step 3: Wait for all resources to be deleted
 kubectl get all -A
 
 # Step 4: Uninstall K3s from nodes
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo /usr/local/bin/k3s-uninstall.sh
-multipass exec {{WORKER_HOSTNAME}} -- sudo /usr/local/bin/k3s-agent-uninstall.sh
+multipass exec kubernetes-control-plane-node -- sudo /usr/local/bin/k3s-uninstall.sh
+multipass exec kubernetes-worker-node -- sudo /usr/local/bin/k3s-agent-uninstall.sh
 
 # Step 5: Destroy VMs with Terraform
-cd {{PROJECT_BASE_PATH}}/terraform
+cd ~/Desktop/gitops-training-with-runbook/terraform
 terraform destroy -auto-approve
 
 # Step 6: Verify VMs are gone
@@ -3296,16 +3330,16 @@ multipass delete --all
 multipass purge
 
 # Step 8: Remove local kubeconfig
-rm {{PROJECT_BASE_PATH}}/kubeconfig*
+rm ~/Desktop/gitops-training-with-runbook/kubeconfig*
 
 # Step 9: Remove KUBECONFIG from shell profile
 # Edit ~/.zshrc and remove the export KUBECONFIG line
 
 # Step 10: Keep only the git repository
 cd ~/Desktop
-# {{PROJECT_NAME}}/ - KEEP (contains all documentation)
-# {{PROJECT_NAME}}-flaskapp/ - Can delete (backed up in GitHub)
-# {{PROJECT_NAME}}-manifests/ - Can delete (backed up in GitHub)
+# project-alpha/ - KEEP (contains all documentation)
+# project-alpha-flaskapp/ - Can delete (backed up in GitHub)
+# project-alpha-manifests/ - Can delete (backed up in GitHub)
 ```
 
 **Verification:**
@@ -3323,10 +3357,10 @@ docker ps       # Should show no K3s containers
 docker images
 
 # Remove Jenkins custom image
-docker rmi {{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}:lts
+docker rmi voltkruger/my-jenkins-image:lts
 
 # Remove all application images (all versions)
-docker images | grep {{APP_IMAGE_NAME}} | awk '{print $1":"$2}' | xargs docker rmi
+docker images | grep test-app-container-image | awk '{print $1":"$2}' | xargs docker rmi
 
 # Clean up dangling images
 docker image prune -a -f
@@ -3340,10 +3374,10 @@ docker images
 If you want to completely remove images from Docker Hub:
 
 1. **Via Docker Hub Web UI:**
-   - Go to: https://hub.docker.com/repositories/{{DOCKERHUB_USERNAME}}
-   - Select repository: `{{JENKINS_IMAGE_NAME}}`
+   - Go to: https://hub.docker.com/repositories/voltkruger
+   - Select repository: `my-jenkins-image`
    - Click **Settings** → **Delete Repository**
-   - Select repository: `{{APP_IMAGE_NAME}}`
+   - Select repository: `test-app-container-image`
    - Click **Settings** → **Delete Repository**
 
 2. **Via Docker Hub CLI** (if installed):
@@ -3354,11 +3388,11 @@ docker login
 # Delete repository
 curl -X DELETE \
   -H "Authorization: Bearer $(cat ~/.docker/config.json | jq -r '.auths."https://index.docker.io/v1/".auth' | base64 -d | cut -d: -f2)" \
-  https://hub.docker.com/v2/repositories/{{DOCKERHUB_USERNAME}}/{{JENKINS_IMAGE_NAME}}/
+  https://hub.docker.com/v2/repositories/voltkruger/my-jenkins-image/
 
 curl -X DELETE \
   -H "Authorization: Bearer $(cat ~/.docker/config.json | jq -r '.auths."https://index.docker.io/v1/".auth' | base64 -d | cut -d: -f2)" \
-  https://hub.docker.com/v2/repositories/{{DOCKERHUB_USERNAME}}/{{APP_IMAGE_NAME}}/
+  https://hub.docker.com/v2/repositories/voltkruger/test-app-container-image/
 ```
 
 ### Local Tool Uninstallation (Optional)
@@ -3412,16 +3446,16 @@ source ~/.zshrc
 ### Complete Cleanup Summary
 
 **What gets deleted:**
-- ✅ All VMs ({{CONTROL_PLANE_HOSTNAME}}, {{WORKER_HOSTNAME}})
+- ✅ All VMs (kubernetes-control-plane-node, kubernetes-worker-plane-node)
 - ✅ All Kubernetes resources (pods, services, deployments)
-- ✅ All namespaces ({{JENKINS_NAMESPACE}}, {{ARGOCD_NAMESPACE}}, {{APP_NAMESPACE}})
+- ✅ All namespaces (jenkins, argocd, test-app-ns)
 - ✅ Local kubeconfig files
 - ✅ Local Docker images (only if you tested Phase 5.5 Docker socket approach)
 - ✅ Docker Hub images (if you choose to delete)
 - ✅ Local application directories (optional)
 
 **What gets kept:**
-- ✅ Git repositories ({{PROJECT_NAME}}, {{PROJECT_NAME}}-flaskapp, {{PROJECT_NAME}}-manifests on GitHub)
+- ✅ Git repositories (project-alpha, project-alpha-flaskapp, project-alpha-manifests on GitHub)
 - ✅ Documentation and code (in GitHub)
 - ✅ Development tools (unless you choose to uninstall)
 - ✅ Terraform state files (for reference)
@@ -3444,9 +3478,9 @@ source ~/.zshrc
 
 **Symptoms:**
 ```
-Error: Repository not found: https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}.git
+Error: Repository not found: https://github.com/omeyazic/project-alpha.git
 Invalid URL format
-Command failed: multipass exec {{CONTROL_PLANE_HOSTNAME}} -- hostname
+Command failed: multipass exec kubernetes-control-plane-node -- hostname
 ```
 
 **Root Cause:**
@@ -3482,11 +3516,11 @@ Error: Plugin did not respond
 **Option A: Manual VM Creation (Recommended if Terraform fails)**
 ```bash
 # Skip Terraform entirely and create VMs manually
-cd {{PROJECT_BASE_PATH}}
+cd ~/Desktop/gitops-training-with-runbook
 
 # Create control plane VM
 multipass launch 22.04 \
-  --name {{CONTROL_PLANE_HOSTNAME}} \
+  --name kubernetes-control-plane-node \
   --cpus 2 \
   --memory 2G \
   --disk 10G \
@@ -3494,7 +3528,7 @@ multipass launch 22.04 \
 
 # Create worker VM
 multipass launch 22.04 \
-  --name {{WORKER_HOSTNAME}} \
+  --name kubernetes-worker-node \
   --cpus 2 \
   --memory 2G \
   --disk 10G \
@@ -3512,7 +3546,7 @@ brew upgrade multipass
 multipass version  # Should be 1.12+ for M1/M2
 
 # Clean and retry Terraform
-cd {{PROJECT_BASE_PATH}}/terraform
+cd ~/Desktop/gitops-training-with-runbook/terraform
 terraform destroy -auto-approve
 rm -rf .terraform*
 terraform init
@@ -3560,7 +3594,7 @@ multipass list
 ping -c 3 {{CONTROL_PLANE_IP}}
 
 # Check SSH
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- echo "Connected"
+multipass exec kubernetes-control-plane-node -- echo "Connected"
 
 # Verify SSH keys
 ls -la ~/.ssh/id_rsa*
@@ -3579,16 +3613,16 @@ Error: K3s service failed to start
 **Solutions:**
 ```bash
 # Check K3s logs on control plane
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo journalctl -u k3s -n 50
+multipass exec kubernetes-control-plane-node -- sudo journalctl -u k3s -n 50
 
 # Check firewall
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo ufw status
+multipass exec kubernetes-control-plane-node -- sudo ufw status
 
 # Ensure port 6443 is open
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo netstat -tlnp | grep 6443
+multipass exec kubernetes-control-plane-node -- sudo netstat -tlnp | grep 6443
 
 # Reinstall K3s
-multipass exec {{CONTROL_PLANE_HOSTNAME}} -- sudo /usr/local/bin/k3s-uninstall.sh
+multipass exec kubernetes-control-plane-node -- sudo /usr/local/bin/k3s-uninstall.sh
 # Then re-run Ansible playbook
 ```
 
@@ -3607,21 +3641,21 @@ ERROR: failed to push image: unauthorized: authentication required
 **Check 1: Verify Kubernetes Secret Exists**
 ```bash
 # Check if secret exists
-kubectl get secret dockerhub-credentials -n {{JENKINS_NAMESPACE}}
+kubectl get secret dockerhub-credentials -n jenkins
 
 # If missing, create it (use your Docker Hub access token)
 kubectl create secret docker-registry dockerhub-credentials \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=YOUR_DOCKERHUB_TOKEN \
   --docker-email=YOUR_EMAIL \
-  -n {{JENKINS_NAMESPACE}}
+  -n jenkins
 ```
 
 **Check 2: Verify Secret Format**
 ```bash
 # Secret should have .dockerconfigjson key
-kubectl get secret dockerhub-credentials -n {{JENKINS_NAMESPACE}} -o jsonpath='{.data}'
+kubectl get secret dockerhub-credentials -n jenkins -o jsonpath='{.data}'
 
 # Should show: {"\.dockerconfigjson":"base64-encoded-string"}
 ```
@@ -3632,19 +3666,19 @@ kubectl get secret dockerhub-credentials -n {{JENKINS_NAMESPACE}} -o jsonpath='{
 - Generate new token if needed
 - Update secret with new token:
 ```bash
-kubectl delete secret dockerhub-credentials -n {{JENKINS_NAMESPACE}}
+kubectl delete secret dockerhub-credentials -n jenkins
 kubectl create secret docker-registry dockerhub-credentials \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=NEW_TOKEN \
   --docker-email=YOUR_EMAIL \
-  -n {{JENKINS_NAMESPACE}}
+  -n jenkins
 ```
 
 **Check 4: Verify Kaniko Pod Can Access Secret**
 ```bash
 # Check Jenkins build logs for volume mount
-kubectl logs -n {{JENKINS_NAMESPACE}} -l jenkins=agent --tail=50
+kubectl logs -n jenkins -l jenkins=agent --tail=50
 
 # Should see: Successfully pulled image "gcr.io/kaniko-project/executor:v1.9.0-debug"
 ```
@@ -3678,17 +3712,17 @@ kubectl top nodes
 kubectl describe nodes | grep -A 5 "Allocated resources"
 
 # If nodes full, scale down other services temporarily
-kubectl scale deployment jenkins -n {{JENKINS_NAMESPACE}} --replicas=0
-kubectl scale deployment jenkins -n {{JENKINS_NAMESPACE}} --replicas=1
+kubectl scale deployment jenkins -n jenkins --replicas=0
+kubectl scale deployment jenkins -n jenkins --replicas=1
 ```
 
 **Check 3: Check Pod Events**
 ```bash
 # Watch pod creation
-kubectl get pods -n {{JENKINS_NAMESPACE}} -w
+kubectl get pods -n jenkins -w
 
 # Check events
-kubectl get events -n {{JENKINS_NAMESPACE}} --sort-by='.lastTimestamp' | tail -20
+kubectl get events -n jenkins --sort-by='.lastTimestamp' | tail -20
 ```
 
 **Check 4: Manually Test Pod Template**
@@ -3699,7 +3733,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: test-kaniko
-  namespace: {{JENKINS_NAMESPACE}}
+  namespace: jenkins
 spec:
   containers:
   - name: kaniko
@@ -3720,10 +3754,10 @@ EOF
 kubectl apply -f test-kaniko-pod.yaml
 
 # Check if it starts
-kubectl get pod test-kaniko -n {{JENKINS_NAMESPACE}}
+kubectl get pod test-kaniko -n jenkins
 
 # Clean up
-kubectl delete pod test-kaniko -n {{JENKINS_NAMESPACE}}
+kubectl delete pod test-kaniko -n jenkins
 ```
 
 #### Issue 7: Argo CD Won't Sync
@@ -3736,45 +3770,45 @@ Application status: OutOfSync
 **Solutions:**
 ```bash
 # Check Argo CD logs
-kubectl logs -n {{ARGOCD_NAMESPACE}} deployment/argocd-server
+kubectl logs -n argocd deployment/argocd-server
 
 # Verify GitHub repository access
-kubectl exec -n {{ARGOCD_NAMESPACE}} deployment/argocd-repo-server -- git ls-remote https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}-manifests.git
+kubectl exec -n argocd deployment/argocd-repo-server -- git ls-remote https://github.com/omeyazic/project-alpha-manifests.git
 
 # Manual sync
-kubectl patch application {{APP_NAME}} -n {{ARGOCD_NAMESPACE}} --type merge -p '{"operation":{"sync":{}}}'
+kubectl patch application test-application -n argocd --type merge -p '{"operation":{"sync":{}}}'
 
 # Check application status
-kubectl get application {{APP_NAME}} -n {{ARGOCD_NAMESPACE}} -o yaml
+kubectl get application test-application -n argocd -o yaml
 ```
 
 #### Issue 8: Application Can't Pull Image
 
 **Symptoms:**
 ```
-Failed to pull image "{{DOCKERHUB_USERNAME}}/{{PROJECT_NAME}}-flaskapp:X": rpc error: code = Unknown
+Failed to pull image "voltkruger/project-alpha-flaskapp:X": rpc error: code = Unknown
 ```
 
 **Solutions:**
 ```bash
 # Check if dockerhub-secret exists in the namespace
-kubectl get secret dockerhub-secret -n {{APP_NAMESPACE}}
+kubectl get secret dockerhub-secret -n test-app-ns
 
 # If missing, create Docker Hub secret
 kubectl create secret docker-registry dockerhub-secret \
   --docker-server=https://index.docker.io/v1/ \
-  --docker-username={{DOCKERHUB_USERNAME}} \
+  --docker-username=voltkruger \
   --docker-password=YOUR_DOCKERHUB_TOKEN \
-  -n {{APP_NAMESPACE}}
+  -n test-app-ns
 
 # Verify deployment has imagePullSecrets configured
-kubectl get deployment {{APP_NAME}} -n {{APP_NAMESPACE}} -o yaml | grep -A 2 imagePullSecrets
+kubectl get deployment test-application -n test-app-ns -o yaml | grep -A 2 imagePullSecrets
 
 # If imagePullSecrets is missing from deployment, patch it
-kubectl patch deployment {{APP_NAME}} -n {{APP_NAMESPACE}} -p '{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"dockerhub-secret"}]}}}}'
+kubectl patch deployment test-application -n test-app-ns -p '{"spec":{"template":{"spec":{"imagePullSecrets":[{"name":"dockerhub-secret"}]}}}}'
 
 # Restart pods to apply changes
-kubectl rollout restart deployment {{APP_NAME}} -n {{APP_NAMESPACE}}
+kubectl rollout restart deployment test-application -n test-app-ns
 ```
 
 #### Issue 9: Browser Can't Access Services (Chrome HSTS Issue)
@@ -3788,14 +3822,14 @@ Connection refused
 **Solutions:**
 ```bash
 # Option 1: Use Safari or Firefox
-open -a Safari http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}}
+open -a Safari http://{{CONTROL_PLANE_IP}}:30080
 
 # Option 2: Clear Chrome HSTS
 # Go to: chrome://net-internals/#hsts
 # Delete domain: {{CONTROL_PLANE_IP}}
 
 # Option 3: Use kubectl port-forward
-kubectl port-forward -n {{JENKINS_NAMESPACE}} svc/jenkins 8080:8080
+kubectl port-forward -n jenkins svc/jenkins 8080:8080
 # Access: http://localhost:8080
 ```
 
@@ -3810,7 +3844,7 @@ flaskapp-xxx  0/1     Pending   0          2m
 **Solutions:**
 ```bash
 # Check pod events
-kubectl describe pod -n {{APP_NAMESPACE}} | grep -A 10 Events
+kubectl describe pod -n test-app-ns | grep -A 10 Events
 
 # Check node resources
 kubectl describe nodes | grep -A 5 "Allocated resources"
@@ -3819,7 +3853,7 @@ kubectl describe nodes | grep -A 5 "Allocated resources"
 kubectl get pvc -A
 
 # Scale down other services if needed
-kubectl scale deployment jenkins -n {{JENKINS_NAMESPACE}} --replicas=0
+kubectl scale deployment jenkins -n jenkins --replicas=0
 ```
 
 ### Debug Commands Reference
@@ -3859,7 +3893,98 @@ kubectl delete pod POD_NAME -n NAMESPACE --grace-period=0 --force
 
 ---
 
-#### Issue 11: Pods stuck at Init:0/1 state after VM Restart
+#### Issue 11: Jenkins & ArgoCD UI Not Accessible After PC Sleep/Restart
+
+**Symptoms:**
+```bash
+# UIs are not accessible in browser
+# Jenkins: http://192.168.2.10:30080 - Connection refused
+# ArgoCD: http://192.168.2.10:30083 - Connection refused
+
+# But VMs show as Running
+multipass list
+Name                    State             IPv4             Image
+k3s-control-node        Running           192.168.2.10     Ubuntu 22.04 LTS
+k3s-worker-node         Running           192.168.2.11     Ubuntu 22.04 LTS
+
+# Kubernetes pods are running
+kubectl get pods -n jenkins
+NAME                       READY   STATUS    RESTARTS   AGE
+jenkins-xxxxx-xxxxx        1/1     Running   0          10m
+
+kubectl get pods -n argocd
+NAME                                    READY   STATUS    RESTARTS   AGE
+argocd-server-xxxxx-xxxxx               1/1     Running   0          10m
+```
+
+**Root Cause:**
+
+Mac sleep mode breaks the Multipass network routing between your Mac and the VMs. The VMs are running, services are healthy, but the Mac → VM network path is broken.
+
+**Resolution:**
+
+**Step 1: Test VM connectivity**
+```bash
+# Try to ping the VMs
+ping 192.168.2.10
+ping 192.168.2.11
+
+# If ping fails, the network is broken
+```
+
+**Step 2: Restart VMs (Most reliable fix)**
+```bash
+# Stop both VMs
+multipass stop k3s-control-node k3s-worker-node
+
+# Start them back up
+multipass start k3s-control-node k3s-worker-node
+
+# Wait 30-60 seconds for K3s to fully start
+sleep 60
+
+# Verify VMs are accessible
+ping 192.168.2.10
+
+# Test UI access
+open http://192.168.2.10:30080  # Jenkins
+open http://192.168.2.10:30083  # ArgoCD
+```
+
+**Step 3: If UIs accessible but some pods failing**
+
+After VM restart, some pods may be in `Unknown`, `Completed`, or `CrashLoopBackOff` state:
+
+```bash
+# Check pod status across all namespaces
+kubectl get pods -A | grep -E 'Unknown|Completed|Error|CrashLoop'
+
+# Common issues after restart:
+# 1. argocd-repo-server in Completed state
+kubectl delete pod -n argocd -l app.kubernetes.io/name=argocd-repo-server
+
+# 2. argocd-applicationset-controller in CrashLoopBackOff
+kubectl delete pod -n argocd -l app.kubernetes.io/name=argocd-applicationset-controller
+
+# 3. Application pods stuck in Unknown state
+kubectl delete pod --all -n sample-app-namespace
+```
+
+**Step 4: Check for Vault authentication issues**
+
+If pods remain in `Init:0/1` state, see **Issue 12: Pods stuck at Init:0/1 state after VM Restart** below for Vault reconfiguration steps.
+
+
+**Prevention:**
+
+For production or long-running training environments, consider:
+- Using a dedicated Linux VM instead of Multipass
+- Cloud-based K8s clusters (EKS, GKE, AKS)
+- Keeping your Mac from sleeping during active training sessions
+
+---
+
+#### Issue 12: Pods stuck at Init:0/1 state after VM Restart
 
 **⚠️ Vault Dev Mode Limitation**
 
@@ -4019,28 +4144,28 @@ This ensures secrets and configurations survive restarts.
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| Jenkins | http://{{CONTROL_PLANE_IP}}:{{JENKINS_HTTP_PORT}} | admin / admin |
-| Argo CD (HTTP) | http://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTP_PORT}} | admin / (from secret) |
-| Argo CD (HTTPS) | https://{{CONTROL_PLANE_IP}}:{{ARGOCD_HTTPS_PORT}} | admin / (from secret) |
-| {{APP_NAME}} | http://{{CONTROL_PLANE_IP}}:{{APP_HTTP_PORT}} | N/A |
+| Jenkins | http://{{CONTROL_PLANE_IP}}:30080 | admin / admin |
+| Argo CD (HTTP) | http://{{CONTROL_PLANE_IP}}:30083 | admin / (from secret) |
+| Argo CD (HTTPS) | https://{{CONTROL_PLANE_IP}}:30082} | admin / (from secret) |
+| test-application | http://{{CONTROL_PLANE_IP}}:30084 | N/A |
 
 ### Important File Locations
 
 | Item | Location |
 |------|----------|
-| Kubeconfig | `{{PROJECT_BASE_PATH}}/kubeconfig` |
-| Terraform | `{{PROJECT_BASE_PATH}}/terraform/` |
-| Ansible | `{{PROJECT_BASE_PATH}}/ansible/` |
-| Kubernetes Manifests | `{{PROJECT_BASE_PATH}}/kubernetes/` |
-| Application Code | `~/Desktop/{{PROJECT_NAME}}-flaskapp/` |
-| GitOps Manifests | `~/Desktop/{{PROJECT_NAME}}-manifests/` |
+| Kubeconfig | `~/Desktop/gitops-training-with-runbook/kubeconfig` |
+| Terraform | `~/Desktop/gitops-training-with-runbook/terraform/` |
+| Ansible | `~/Desktop/gitops-training-with-runbook/ansible/` |
+| Kubernetes Manifests | `~/Desktop/gitops-training-with-runbook/kubernetes/` |
+| Application Code | `~/Desktop/project-alpha-flaskapp/` |
+| GitOps Manifests | `~/Desktop/project-alpha-manifests/` |
 
 ### VM Information
 
 | VM | IP | Role | Resources |
 |----|----|-|-----------|
-| {{CONTROL_PLANE_HOSTNAME}} | {{CONTROL_PLANE_IP}} | Control Plane | 2 CPU, 2GB RAM, 10GB disk |
-| {{WORKER_HOSTNAME}} | {{WORKER_NODE_IP}} | Worker Node | 2 CPU, 2GB RAM, 10GB disk |
+| kubernetes-control-plane-node | {{CONTROL_PLANE_IP}} | Control Plane | 2 CPU, 2GB RAM, 10GB disk |
+| kubernetes-worker-node | {{WORKER_NODE_IP}} | Worker Node | 2 CPU, 2GB RAM, 10GB disk |
 
 ### Common Commands
 
@@ -4125,7 +4250,7 @@ kubectl delete pod POD_NAME -n NAMESPACE
 - This helps you recognize anti-patterns when reviewing existing systems
 
 **Documentation Repository:**
-https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}
+https://github.com/omeyazic/project-alpha
 
 ---
 
