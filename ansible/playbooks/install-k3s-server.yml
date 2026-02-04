@@ -1,0 +1,52 @@
+---
+- name: Install K3s server (control plane)
+  hosts: control_plane
+  become: yes
+  tasks:
+    - name: Download K3s installation script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+
+    - name: Install K3s server
+      shell: |
+        INSTALL_K3S_VERSION=v1.28.5+k3s1 \
+        K3S_TOKEN=my-secret-token \
+        sh /tmp/k3s-install.sh server \
+          --write-kubeconfig-mode=644 \
+          --node-ip={{ node_ip }} \
+          --cluster-init
+      args:
+        creates: /etc/systemd/system/k3s.service
+
+    - name: Wait for K3s to be ready
+      wait_for:
+        port: 6443
+        delay: 10
+        timeout: 300
+
+    - name: Wait for node to be ready
+      shell: kubectl wait --for=condition=Ready node/kubernetes-control-plane-node --timeout=300s
+      retries: 5
+      delay: 10
+      register: result
+      until: result.rc == 0
+
+    - name: Get node token for workers
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token
+
+    - name: Display node token
+      debug:
+        msg: "Node token: {{ node_token.content | b64decode }}"
+
+    - name: Get K3s server status
+      command: systemctl status k3s --no-pager
+      register: k3s_status
+      changed_when: false
+
+    - name: Display K3s status
+      debug:
+        msg: "{{ k3s_status.stdout_lines }}"

@@ -1,0 +1,42 @@
+---
+- name: Install K3s agent (worker nodes)
+  hosts: workers
+  become: yes
+  vars:
+    k3s_server_ip: "192.168.2.16"
+    k3s_token: "my-secret-token"
+  tasks:
+    - name: Download K3s installation script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+
+    - name: Install K3s agent
+      shell: |
+        INSTALL_K3S_VERSION=v1.28.5+k3s1 \
+        K3S_URL=https://{{ k3s_server_ip }}:6443 \
+        K3S_TOKEN={{ k3s_token }} \
+        sh /tmp/k3s-install.sh agent \
+          --node-ip={{ node_ip }}
+      args:
+        creates: /etc/systemd/system/k3s-agent.service
+
+    - name: Wait for K3s agent to start
+      systemd:
+        name: k3s-agent
+        state: started
+        enabled: yes
+
+    - name: Wait for agent registration
+      pause:
+        seconds: 30
+
+    - name: Get K3s agent status
+      command: systemctl status k3s-agent --no-pager
+      register: k3s_agent_status
+      changed_when: false
+
+    - name: Display K3s agent status
+      debug:
+        msg: "{{ k3s_agent_status.stdout_lines }}"
