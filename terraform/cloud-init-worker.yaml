@@ -1,0 +1,24 @@
+#cloud-config
+hostname: kubernetes-worker-node
+manage_etc_hosts: true
+
+users:
+  - default
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCtYD5YQfva5gGCRhUInoJUDZvbrVYdMHxTQ4eElDalRq4sobx1a7sNFej/F4r980OIHIZW29KhqqVHaEeYMhBUpXzZwfvf455i5SBxSm3zRTIXyvUpohEM9zYqqD8tb9jrKdjafPxAMmvinK0r+uMRXUgiN4xzXS2Z+xajCLmTzZSU43PE7KV5KzwzlHqL2l4eOeCMbyFSpYTt2MwpOC4/OHp5I2vkYIOsbp3RhYoTzKMSb+EXCGBZNykfIvXPi7c0h3dohqXQJyipdnHAs4hBymIg5V69gBcC7bQbXZFq9ro4Wf78TJ9Z8XVHm7kZBziIg692xXt3d0cV7x82QJShbDgR+xqnlsVaDB3RM+aXyx9dkmQPnwnA2IkMZ4RMLPsX3N2xfMNt6tKxu6cx0849IXm/7ngt45yVCNEPDoo406K67X3d3w9DnE8dk08buWIi+hjTLy5+0oGdw7kvGYLnzHV2OmSmfFCvmgYHHtR4vphtyp/WQQA74svwR6mj5fYvsrnZNyTnZoCqg75KAe5JeiAvBb1AsQozOaRKmsgS+j5xkaK3dpwUs4K4Czod9yhtAM2sJFRs8t/6cE1XFq2f5RWibpjW0kUUSn0xoX3RJqiAilW9rD9tL67yuu7Zj7rvg5k5llrMchiW26Ib16OWRE7D9sNuQ9Mcl3byznvyDQ== oyazici@hotmail.com
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - wget
+  - vim
+  - net-tools
+  - software-properties-common
+
+runcmd:
+  - echo "Setup complete" >> /var/log/cloud-init-done.log
